@@ -9,3 +9,7 @@ To run this:
 To run the tests:
 
     jest -i
+
+
+API - still under development
+https://github.com/ryanbroome/express-valet
