@@ -1,7 +1,7 @@
 // TESTS  sqlForPartialUpdate, written by RB - Top to Bottom
 const { sqlForPartialUpdate } = require("./sql.js");
 const db = require("../db");
-
+// '
 describe("tests sqlForPartialUpdate", function () {
   // Declare variables  for testing
   let userDataToUpdate;
