@@ -1,0 +1,77 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "required": [
+
+    ],
+    "properties": {
+        "ticket_num": {
+            "type": "integer",
+            "default": 0,
+            "title": "The ticket_num Schema",
+            "examples": [
+                1001
+            ]
+        },
+        "check_in": {
+            "type": "string",
+            "default": "",
+            "title": "The check_in Schema",
+            "examples": [
+                "2024-04-01T12:00:00Z"
+            ]
+        },
+        "vehicle_status": {
+            "type": "string",
+            "default": "",
+            "title": "The vehicle_status Schema",
+            "examples": [
+                "parked"
+            ]
+        },
+        "mobile": {
+            "type": "string",
+            "default": "",
+            "title": "The mobile Schema",
+            "examples": [
+                "555-123-4567"
+            ]
+        },
+        "color": {
+            "type": "string",
+            "default": "",
+            "title": "The color Schema",
+            "examples": [
+                "blue"
+            ]
+        },
+        "make": {
+            "type": "string",
+            "default": "",
+            "title": "The make Schema",
+            "examples": [
+                "honda"
+            ]
+        },
+        "damages": {
+            "type": "string",
+            "default": "",
+            "title": "The damages Schema",
+            "examples": [
+                "hood, bumper, rims scratched"
+            ]
+        }
+    },
+    "examples": [{
+        "ticket_num": 1001,
+        "check_in": "2024-04-01T12:00:00Z",
+        "vehicle_status": "parked",
+        "mobile": "555-123-4567",
+        "color": "blue",
+        "make": "honda",
+        "damages": "hood, bumper, rims scratched"
+    }]
+}

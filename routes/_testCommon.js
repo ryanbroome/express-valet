@@ -2,87 +2,39 @@
 
 const db = require("../db.js");
 const User = require("../models/user");
-const Company = require("../models/company");
-const Job = require("../models/job");
+const Vehicle = require("../models/vehicle");
+const Transaction = require("../models/transaction");
 const { createToken } = require("../helpers/tokens");
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM companies");
+  await db.query("DELETE FROM vehicles");
   // noinspection SqlWithoutWhere
-  await db.query(`DELETE FROM jobs`);
-  // noinspection SqlWithoutWhere
-  await db.query(`DELETE FROM applications`);
+  await db.query("DELETE FROM transactions");
 
   Promise.all([
-    await Company.create({
-      handle: "c1",
-      name: "C1",
-      numEmployees: 1,
-      description: "Desc1",
-      logoUrl: "http://c1.img",
-    }),
-    await Company.create({
-      handle: "c2",
-      name: "C2",
-      numEmployees: 2,
-      description: "Desc2",
-      logoUrl: "http://c2.img",
-    }),
-    await Company.create({
-      handle: "c3",
-      name: "C3",
-      numEmployees: 3,
-      description: "Desc3",
-      logoUrl: "http://c3.img",
+    await Vehicle.create({
+      ticketNum: 1,
+      vehicleStatus: "parked",
+      mobile: "555-123-4567",
+      color: "black",
+      make: "honda",
+      damages: "scratch",
+      notes: "manual trans",
     }),
     await User.register({
       username: "u1",
-      firstName: "U1F",
-      lastName: "U1L",
+      password: "password",
+      firstName: "first",
+      lastName: "last",
       email: "user1@user.com",
-      password: "password1",
-      isAdmin: false,
+      phone: "555-123-4567",
     }),
-    await User.register({
-      username: "u2",
-      firstName: "U2F",
-      lastName: "U2L",
-      email: "user2@user.com",
-      password: "password2",
-      isAdmin: false,
-    }),
-    await User.register({
-      username: "u3",
-      firstName: "U3F",
-      lastName: "U3L",
-      email: "user3@user.com",
-      password: "password3",
-      isAdmin: false,
-    }),
-    await User.register({
-      username: "admin",
-      firstName: "ad",
-      lastName: "min",
-      email: "admin@user.com",
-      password: "password4",
-      isAdmin: true,
-    }),
-    await Job.create({
-      id: 1,
-      title: "j1",
-      salary: 1,
-      equity: "0",
-      company_handle: "c1",
-    }),
-    await Job.create({
-      id: 2,
-      title: "j2",
-      salary: 2,
-      equity: "0",
-      company_handle: "c2",
+    await Transaction.create({
+      user_id: 1,
+      vehicle_id: 1,
     }),
   ]);
 }
@@ -94,13 +46,16 @@ async function commonBeforeEach() {
 async function commonAfterEach() {
   await db.query("ROLLBACK");
 }
-
+// ?commonAfterAll()? what does this do? TRUNCATE? RESTART IDENTITY CASCADE
 async function commonAfterAll() {
-  Promise.all([await db.query("ROLLBACK"), await db.query(`TRUNCATE jobs RESTART IDENTITY CASCADE`)]);
+  Promise.all([await db.query("ROLLBACK"), await db.query(`TRUNCATE vehicles RESTART IDENTITY CASCADE`)]);
   await db.end();
 }
 
-const u1Token = createToken({ username: "u1", isAdmin: false });
+const u1Token = createToken({
+  username: "u1",
+  isAdmin: false,
+});
 const testToken = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluVXNlciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5Njk2MzI5OX0.jXSjBR_BLkIpeYzosNz-cmTKfvopMNynadatC3BPgGo`;
 
 module.exports = {

@@ -1,6 +1,6 @@
-# Jobly Backend
+# Valet Backend
 
-This is the Express backend for Jobly, version 2.
+This is the Express backend for Valet, version 1.
 
 To run this:
 

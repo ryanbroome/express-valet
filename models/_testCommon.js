@@ -5,36 +5,44 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM companies");
+  await db.query("DELETE FROM vehicles");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
 
   await db.query(`
-    INSERT INTO companies(handle, name, num_employees, description, logo_url)
-    VALUES ('c1', 'C1', 1, 'Desc1', 'http://c1.img'),
-           ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
-           ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
+  INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages)
+  VALUES
+      (1001, 'Parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper'),
+      (1002, 'Parked', '987654321', 'Blue', 'Honda', 'None'),
+      (1003, 'Parked', '555555555', 'Black', 'Ford', 'Dented door')`);
 
   await db.query(
     `
-        INSERT INTO users(username,
-                          password,
-                          first_name,
-                          last_name,
-                          email)
-        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com')
+    INSERT INTO users (
+      username,
+       password,
+        first_name, 
+        last_name,
+         email,
+         phone,
+         total_parked,
+          is_admin)
+           VALUES  ('admin', $1, 'first', 'last', 'admin@gmail.com', '555-123-4567', 0, TRUE)
         RETURNING username`,
     [await bcrypt.hash("password1", BCRYPT_WORK_FACTOR)]
   );
   await db.query(
     `
-        INSERT INTO users(username,
-                          password,
-                          first_name,
-                          last_name,
-                          email,
-                          is_admin)
-        VALUES ('u2', $1, 'U2F', 'U2L', 'u2@email.com', true)
+    INSERT INTO users (
+      username,
+       password,
+        first_name, 
+        last_name,
+         email,
+         phone,
+         total_parked,
+          is_admin)
+           VALUES ('user1', $1, 'first', 'last', 'test1@gmail.com', '555-123-4567', 0, FALSE)
         RETURNING username`,
     [await bcrypt.hash("password2", BCRYPT_WORK_FACTOR)]
   );

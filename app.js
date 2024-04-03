@@ -1,17 +1,17 @@
 "use strict";
 
-/** Express app for jobly. */
+/** Express app for valet. */
 
 const express = require("express");
 const cors = require("cors");
 
 const { NotFoundError } = require("./expressError");
-
 const { authenticateJWT } = require("./middleware/auth");
+
 const authRoutes = require("./routes/auth");
-const companiesRoutes = require("./routes/companies");
 const usersRoutes = require("./routes/users");
-const jobsRoutes = require("./routes/jobs");
+const vehiclesRoutes = require("./routes/vehicles");
+const transactionRoutes = require("./routes/transactions");
 
 const morgan = require("morgan");
 
@@ -23,16 +23,16 @@ app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
-app.use("/companies", companiesRoutes);
 app.use("/users", usersRoutes);
-app.use("/jobs", jobsRoutes);
+app.use("/vehicles", vehiclesRoutes);
+app.use("/transactions", transactionRoutes);
 
-/** Handle 404 errors -- this matches everything */
+/**  Handle 404 errors */
 app.use(function (req, res, next) {
   return next(new NotFoundError());
 });
 
-/** Generic error handler; anything unhandled goes here. */
+// * catch all generic error handler
 app.use(function (err, req, res, next) {
   if (process.env.NODE_ENV !== "test") console.error(err.stack);
   const status = err.status || 500;

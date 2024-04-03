@@ -1,0 +1,73 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "required": [
+        "ticketNum",
+        "vehicleStatus",
+        "mobile",
+        "color",
+        "make",
+        "damages"
+    ],
+    "properties": {
+        "ticketNum": {
+            "type": "integer",
+            "default": 0,
+            "title": "The ticketNum Schema",
+            "examples": [
+                1001
+            ]
+        },
+        "vehicleStatus": {
+            "type": "string",
+            "default": "",
+            "title": "The vehicleStatus Schema",
+            "examples": [
+                "parked"
+            ]
+        },
+        "mobile": {
+            "type": "string",
+            "default": "",
+            "title": "The mobile Schema",
+            "examples": [
+                "555-123-4567"
+            ]
+        },
+        "color": {
+            "type": "string",
+            "default": "",
+            "title": "The color Schema",
+            "examples": [
+                "blue"
+            ]
+        },
+        "make": {
+            "type": "string",
+            "default": "",
+            "title": "The make Schema",
+            "examples": [
+                "honda"
+            ]
+        },
+        "damages": {
+            "type": "string",
+            "default": "",
+            "title": "The damages Schema",
+            "examples": [
+                "hood, bumper, rims scratched"
+            ]
+        }
+    },
+    "examples": [{
+        "ticketNum": 1001,
+        "vehicleStatus": "parked",
+        "mobile": "555-123-4567",
+        "color": "blue",
+        "make": "honda",
+        "damages": "hood, bumper, rims scratched"
+    }]
+}
