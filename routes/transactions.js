@@ -15,9 +15,9 @@ const router = new express.Router();
 
 /** POST / { transaction } =>  { transaction }
  *
- * transaction should be {userId, vehicleId }
+ * transaction should be {userId, vehicleId } =>
  *
- * Returns { parked : msg }
+ * Returns { success : msg }
  *
  *Authorization required: login?
  */
@@ -41,14 +41,71 @@ router.post(
   }
 );
 
-/** GET /  ALL =>
- *   { transactions: [ {transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }, ...] }
+/** GET /  ALL BY  locationId, STATUS =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/location/:locationId/status/:status", async function (req, res, next) {
+  try {
+    const transactions = await Transaction.getAllByLocationStatus(req.params.locationId, req.params.status);
+    return res.json({ transactions });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /  ALL BY  locationId, USERID =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/location/:locationId/user/:userId", async function (req, res, next) {
+  try {
+    const transactions = await Transaction.getAllByLocationUserId(req.params.locationId, req.params.userId);
+    return res.json({ transactions });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /  ALL BY  range {startYear, startMonth, startDay, endYear, endMonth, endDay } startDate, endDate  =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/range", async function (req, res, next) {
+  try {
+    const transactions = await Transaction.getAllDataByDateRange({ ...req.body });
+    return res.json({ transactions });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /:mobile  =>  { transaction }
+ *
+ *  transaction is { ...allColumnsAlDataTables }
  *
  * Authorization required: none
  */
-router.get("/", async function (req, res, next) {
+router.get("/mobile", async function (req, res, next) {
   try {
-    const transactions = await Transaction.getAll();
+    const transaction = await Transaction.getByMobile(req.body.mobile);
+    return res.json({ transaction });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /  LOST KEYS  locationId, USERID =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/location/:locationId/user/:userId/lostKeys", async function (req, res, next) {
+  try {
+    const transactions = await Transaction.lostKeys(req.params.locationId, req.params.userId);
     return res.json({ transactions });
   } catch (err) {
     return next(err);

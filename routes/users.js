@@ -89,9 +89,9 @@ router.get(
 /** PATCH / :username { user } => { user }
  *
  * Data can include:
- *   { firstName, lastName, email, phone, totalParked, isAdmin }
+ *   { firstName, lastName, email, phone, totalParked, isAdmin, locationId }
  *
- * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
+ * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
  *
  * Authorization required: login && same user || admin
  **/

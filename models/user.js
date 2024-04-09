@@ -51,7 +51,7 @@ class User {
    *
    * Throws BadRequestError on duplicates.
    **/
-  static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, isAdmin = false }) {
+  static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, isAdmin = false, locationId = 1 }) {
     const duplicateCheck = await db.query(
       `SELECT username
            FROM users
@@ -64,7 +64,7 @@ class User {
     }
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    console.log("ISADMIN", isAdmin);
+
     const result = await db.query(
       `INSERT INTO 
         users
@@ -75,10 +75,11 @@ class User {
                 email,
                 phone,
                 total_parked,
-                is_admin )
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", is_admin AS "isAdmin"`,
-      [username, hashedPassword, firstName, lastName, email, phone, totalParked, isAdmin]
+                is_admin,
+                location_id )
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", is_admin AS "isAdmin", location_id AS "locationId"`,
+      [username, hashedPassword, firstName, lastName, email, phone, totalParked, isAdmin, locationId]
     );
 
     const user = result.rows[0];
@@ -88,7 +89,7 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, first_name, last_name, email, phone, totalParked, isAdmin }, ...]
+   * Returns [{ username, first_name, last_name, email, phone, totalParked, isAdmin, locationId }, ...]
    **/
   static async findAll() {
     const result = await db.query(
@@ -99,7 +100,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin"
+          is_admin AS "isAdmin",
+          location_id AS "locationId"
       FROM 
           users
            `
@@ -110,7 +112,7 @@ class User {
 
   /** Given a username, return data about user.
    *
-   * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
+   * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
    *
    * Throws NotFoundError if user not found.
    **/
@@ -123,7 +125,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin"
+          is_admin AS "isAdmin",
+          location_id AS "locationId"
       FROM 
           users
       WHERE 
@@ -164,6 +167,7 @@ class User {
       lastName: "last_name",
       isAdmin: "is_admin",
       totalParked: "total_parked",
+      locationId: "location_id",
     });
 
     const usernameVarIdx = "$" + (values.length + 1);
@@ -178,7 +182,8 @@ class User {
                             email,
                             phone, 
                             total_parked AS "totalParked",
-                            is_admin AS "isAdmin"`;
+                            is_admin AS "isAdmin"
+                            location_id AS "locationId"`;
 
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];

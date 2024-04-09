@@ -67,6 +67,32 @@ class Vehicle {
     );
     return vehiclesRes.rows;
   }
+  /** Find vehicles by status**/
+  static async getByStatus(status) {
+    const vehicleRes = await db.query(
+      `SELECT 
+          id,
+          ticket_num AS "ticketNum",
+          check_in AS "checkIn",
+          check_out AS "checkOut",
+          vehicle_status AS "vehicleStatus",
+          mobile,
+          color,
+          make,
+          damages,
+          notes
+      FROM
+          vehicles
+      WHERE 
+          vehicle_status = $1
+    `,
+      [status]
+    );
+
+    const vehicles = vehicleRes.rows;
+    if (!vehicles) throw new NotFoundError(`No vehicles with status : ${status}`);
+    return vehicles;
+  }
 
   /** Given a vehicle partial mobile, return data about vehicle.
    *
@@ -74,7 +100,7 @@ class Vehicle {
    *
    * Throws NotFoundError if not found.
    **/
-  static async mobile(mobile) {
+  static async getByMobile(mobile) {
     const vehicleRes = await db.query(
       `SELECT 
            id,
@@ -85,18 +111,19 @@ class Vehicle {
            mobile,
            color,
            make,
-          damages
+          damages,
+          notes
   FROM
           vehicles
   WHERE mobile LIKE ($1)`,
       [`%${mobile}%`]
     );
 
-    const vehicles = vehicleRes.rows;
+    const vehicle = vehicleRes.rows;
 
-    if (!vehicles) throw new NotFoundError(`No vehicle: ${mobile}`);
+    if (!vehicle) throw new NotFoundError(`No vehicle with: ${mobile}`);
 
-    return vehicles;
+    return vehicle;
   }
 
   /** Update vehicle data with `data`.

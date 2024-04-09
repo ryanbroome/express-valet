@@ -12,4 +12,7 @@ To run the tests:
 
 
 API - still under development
+
+TODO UPDATE API LINK
+INCLUDE DOCUMENTATION FOR API USAGE, METHOD CALL AND RETURN DATA EXAMPLES
 https://github.com/ryanbroome/express-valet

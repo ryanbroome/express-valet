@@ -10,7 +10,8 @@
         "firstName",
         "lastName",
         "email",
-        "phone"
+        "phone",
+        "locationId"
     ],
     "properties": {
         "username": {
@@ -67,6 +68,14 @@
             "title": "The isAdmin Schema",
             "examples": [
                 true
+            ]
+        },
+        "location_id": {
+            "title": "The location_id Schema",
+            "type": "integer",
+            "default": false,
+            "examples": [
+                1
             ]
         }
     },

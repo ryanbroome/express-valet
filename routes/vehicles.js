@@ -64,10 +64,24 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
  *
  * Authorization required: none
  */
-router.get("/:mobile", async function (req, res, next) {
+router.get("/mobile/:mobile", async function (req, res, next) {
   try {
-    const vehicles = await Vehicle.mobile(req.params.mobile);
+    const vehicle = await Vehicle.getByMobile(req.params.mobile);
+    return res.json({ vehicle });
+  } catch (err) {
+    return next(err);
+  }
+});
 
+/** GET /:vehicleStatus  =>  { vehicles }
+ *
+ *  vehiclea are [{ ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }, ...]
+ *
+ * Authorization required: none
+ */
+router.get("/status/:status", async function (req, res, next) {
+  try {
+    const vehicles = await Vehicle.getByStatus(req.params.status);
     return res.json({ vehicles });
   } catch (err) {
     return next(err);

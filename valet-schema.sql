@@ -1,5 +1,8 @@
 -- Schema for valet application
-
+CREATE TABLE locations (
+    id SERIAL PRIMARY KEY,
+    siteName TEXT NOT NULL
+);
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -10,13 +13,16 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
     phone TEXT NOT NULL,
     total_parked INTEGER NOT NULL DEFAULT 0,
-    is_admin BOOLEAN NOT NULL DEFAULT FALSE
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    location_id INTEGER NOT NULL,
+        FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
 );
+
 -- vehicle_status may need to be fixed, to make a default value of parked with every initial entry
 CREATE TABLE vehicles (
     id SERIAL PRIMARY KEY,
     ticket_num INTEGER,
-    vehicle_status DEFAULT 'parked' TEXT,
+    vehicle_status TEXT DEFAULT 'parked',
     check_in TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     mobile TEXT NOT NULL,
     color TEXT,
@@ -32,5 +38,7 @@ CREATE TABLE transactions (
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     vehicle_id INTEGER,
         FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE,
+    location_id INTEGER,
+        FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
     transaction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

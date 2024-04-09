@@ -70,6 +70,14 @@
             "examples": [
                 false
             ]
+        },
+        "location_id": {
+            "title": "The location_id Schema",
+            "type": "integer",
+            "default": false,
+            "examples": [
+                1
+            ]
         }
     },
     "examples": [{
@@ -80,6 +88,7 @@
         "last_name": "last_name",
         "email": "username@gmail.com",
         "phone": "555-123-4567",
-        "is_admin": false
+        "is_admin": false,
+        "location_id" : 1
     }]
 }
