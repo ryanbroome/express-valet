@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const vehiclesRoutes = require("./routes/vehicles");
 const transactionRoutes = require("./routes/transactions");
+const locationRoutes = require("./routes/locations");
 
 const morgan = require("morgan");
 const app = express();
@@ -25,6 +26,7 @@ app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
+app.use("/locations", locationRoutes);
 
 /**  Handle 404 errors */
 app.use(function (req, res, next) {

@@ -3,7 +3,9 @@
 INSERT INTO locations
     (siteName)
 VALUES 
-    ('Mease Countryside');
+    ('MCH-MAB'),
+    ('MCH-MAIN'),
+    ('MCH-ED');
 
 -- test users have the password 'password'
 -- inserting sample users

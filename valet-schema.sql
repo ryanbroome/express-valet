@@ -1,7 +1,7 @@
 -- Schema for valet application
 CREATE TABLE locations (
     id SERIAL PRIMARY KEY,
-    siteName TEXT NOT NULL
+    siteName TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE users (
