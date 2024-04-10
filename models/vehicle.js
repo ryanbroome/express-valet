@@ -28,7 +28,8 @@ class Vehicle {
     const result = await db.query(
       `INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)
         VALUES  ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING 
+        RETURNING
+            id,
             ticket_num AS "ticketNum",
             vehicle_status AS "vehicleStatus",
             mobile,
@@ -67,6 +68,36 @@ class Vehicle {
     );
     return vehiclesRes.rows;
   }
+  /** GET vehicle by ID.
+   *
+   * Returns [{ ticketNum, status, mobile, color, make, damages, notes }, ...]
+   * */
+  static async getById(id) {
+    const vehicleRes = await db.query(
+      `SELECT 
+          id,
+          ticket_num AS "ticketNum",
+          check_in AS "checkIn",
+          check_out AS "checkOut",
+          vehicle_status AS "vehicleStatus",
+          mobile,
+          color,
+          make,
+          damages,
+          notes
+      FROM
+          vehicles
+      WHERE 
+          id = $1
+    `,
+      [id]
+    );
+
+    const vehicle = vehicleRes.rows[0];
+    if (!vehicle) throw new NotFoundError(`No vehicle with ID : ${id}`);
+    return vehicle;
+  }
+
   /** GET Find vehicles by status**/
   static async getByStatus(status) {
     const vehicleRes = await db.query(

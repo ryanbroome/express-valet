@@ -78,7 +78,7 @@ class User {
                 is_admin,
                 location_id )
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", is_admin AS "isAdmin", location_id AS "locationId"`,
+           RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", is_admin AS "isAdmin", location_id AS "locationId"`,
       [username, hashedPassword, firstName, lastName, email, phone, totalParked, isAdmin, locationId]
     );
 
@@ -119,6 +119,7 @@ class User {
   static async get(username) {
     const userRes = await db.query(
       `SELECT 
+          id,
           username,
           first_name AS "firstName",
           last_name AS "lastName",

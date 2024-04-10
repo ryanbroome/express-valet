@@ -58,6 +58,25 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+/** GET / =>  { vehicles }
+ *
+ * Returns {  vehicle  }
+ *
+ * Authorization required: login
+ */
+router.get(
+  "/:id",
+  //  ensureLoggedIn,
+  async function (req, res, next) {
+    try {
+      const vehicle = await Vehicle.getById(req.params.id);
+      return res.json({ vehicle });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 /** GET /:mobile  =>  { vehicle }
  *
  *  vehicle is { ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }
