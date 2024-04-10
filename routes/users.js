@@ -47,7 +47,7 @@ router.post(
   }
 );
 
-/** GET /  => { users: [ {username, firstName, lastName, email }, ... ] }
+/** GET /  ALL => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of ALL USERS, ALL DATA.
  *
@@ -116,7 +116,7 @@ router.patch(
   }
 );
 
-/** DELETE /[username]  =>  { deleted: username }
+/** DELETE /:username  =>  { deleted: username }
  *
  * Authorization required: login
  **/
@@ -127,6 +127,23 @@ router.delete(
     try {
       await User.remove(req.params.username);
       return res.json({ deleted: req.params.username });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+/** DELETE /:id  =>  { deleted: ID }
+ *
+ * Authorization required: login
+ **/
+router.delete(
+  "remove/:id",
+  // ensureLoggedIn, loggedInUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      await User.removeById(req.params.id);
+      return res.json({ deleted: req.params.id });
     } catch (err) {
       return next(err);
     }

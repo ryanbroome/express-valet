@@ -85,10 +85,10 @@ class Location {
 
     const result = await db.query(query, [id]);
 
-    const locations = result.rows;
+    const location = result.rows;
 
-    if (!locations) throw new NotFoundError(`No locations available with ID : ${id}`);
-    return locations;
+    if (!location) throw new NotFoundError(`No locations available with ID : ${id}`);
+    return location;
   }
 
   /** GET  locations from database for a given sitename

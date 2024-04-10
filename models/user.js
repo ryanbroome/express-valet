@@ -210,5 +210,22 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
+
+  /** Delete given user from database; returns undefined. */
+  static async removeById(id) {
+    let result = await db.query(
+      `DELETE
+        FROM 
+            users
+        WHERE 
+            id = $1
+        RETURNING 
+            id`,
+      [id]
+    );
+    const user = result.rows[0];
+
+    if (!user) throw new NotFoundError(`No user with ID: ${id}`);
+  }
 }
 module.exports = User;

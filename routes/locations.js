@@ -64,8 +64,8 @@ router.get("/", async function (req, res, next) {
  */
 router.get("/id/:id", async function (req, res, next) {
   try {
-    const locations = await Location.getById(req.params.id);
-    return res.json({ locations });
+    const location = await Location.getById(req.params.id);
+    return res.json({ location });
   } catch (err) {
     return next(err);
   }

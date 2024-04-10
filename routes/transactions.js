@@ -103,7 +103,7 @@ router.get("/mobile", async function (req, res, next) {
  *
  * TODO Authorization required: Admin
  */
-router.get("/location/:locationId/user/:userId/lostKeys", async function (req, res, next) {
+router.get("/lostKeys/:locationId/:userId", async function (req, res, next) {
   try {
     const transactions = await Transaction.lostKeys(req.params.locationId, req.params.userId);
     return res.json({ transactions });
@@ -118,7 +118,7 @@ router.get("/location/:locationId/user/:userId/lostKeys", async function (req, r
  */
 router.get("/:id", async function (req, res, next) {
   try {
-    const transaction = await Transaction.get(req.params.id);
+    const transaction = await Transaction.getById(req.params.id);
     return res.json({ transaction });
   } catch (err) {
     return next(err);

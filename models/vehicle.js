@@ -7,7 +7,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for vehicles. */
 
 class Vehicle {
-  /** Create a vehicle (from data), update db, return new vehicle data.
+  /** POST Create a vehicle (from data), update db, return new vehicle data.
    *
    * data should be { ticketNum, status, mobile, color, make }
    *
@@ -44,7 +44,7 @@ class Vehicle {
     return vehicle;
   }
 
-  /** Find all vehicles.
+  /** GET Find all vehicles.
    *
    * Returns [{ ticketNum, status, mobile, color, make }, ...]
    * */
@@ -67,7 +67,7 @@ class Vehicle {
     );
     return vehiclesRes.rows;
   }
-  /** Find vehicles by status**/
+  /** GET Find vehicles by status**/
   static async getByStatus(status) {
     const vehicleRes = await db.query(
       `SELECT 
@@ -94,7 +94,7 @@ class Vehicle {
     return vehicles;
   }
 
-  /** Given a vehicle partial mobile, return data about vehicle.
+  /** GET Given a vehicle partial mobile, return data about vehicle.
    *
    * Returns {}
    *
@@ -102,7 +102,8 @@ class Vehicle {
    **/
   static async getByMobile(mobile) {
     const vehicleRes = await db.query(
-      `SELECT 
+      `
+SELECT
            id,
            ticket_num AS "ticketNum",
            check_in AS "checkIn",
@@ -113,9 +114,15 @@ class Vehicle {
            make,
           damages,
           notes
-  FROM
+FROM
           vehicles
-  WHERE mobile LIKE ($1)`,
+WHERE 
+          mobile 
+ILIKE 
+          $1
+AND 
+          vehicle_status = 'parked'
+          `,
       [`%${mobile}%`]
     );
 
@@ -126,7 +133,7 @@ class Vehicle {
     return vehicle;
   }
 
-  /** Update vehicle data with `data`.
+  /** PATCH Update vehicle data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
@@ -170,7 +177,7 @@ class Vehicle {
     return vehicle;
   }
 
-  /** Delete given vehicle from database; returns undefined.
+  /** DELETE given vehicle from database; returns undefined.
    *
    * Throws NotFoundError if vehicle not found.
    **/
@@ -190,6 +197,7 @@ class Vehicle {
 
     if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
   }
+  i;
 }
 
 module.exports = Vehicle;

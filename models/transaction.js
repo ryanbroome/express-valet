@@ -174,7 +174,7 @@ class Transaction {
    *
    * Throws error if no transactions in database
    * */
-  // *todo SHOULD probably update this to include status or to only return 'parked'
+  // *todo WOULD BE HELPFUL TO ADD STATUS argument?
   static async getAllByLocationUserId(locationId, userId) {
     const query = `
 SELECT 
@@ -216,8 +216,10 @@ ON
 WHERE
     l.id = $1
 AND
-   u.id = $2
-   `;
+    u.id = $2
+AND
+    v.vehicle_status = 'parked'
+      `;
 
     const result = await db.query(query, [locationId, userId]);
 
@@ -226,13 +228,13 @@ AND
     if (!transactions) throw new NotFoundError(`No transactions available at location ${locationId}for user ${userId}`);
     return transactions;
   }
+
   /** GET  transactions from database for a given location_id , user_id
    *
    * Returns { transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }
    *
    * Throws error if no transactions in database
    * */
-  // * CAN UPDATE LIMIT TO BE A VARIABLE IF DESIRED DOWN THE ROAD
   static async lostKeys(locationId, userId) {
     const query = `
 SELECT 
@@ -352,7 +354,7 @@ LIMIT
 
    * Throws NotFoundError if not found.
    **/
-  static async get(id) {
+  static async getById(id) {
     const transactionRes = await db.query(
       `  SELECT 
       t.id AS "transactionId",
