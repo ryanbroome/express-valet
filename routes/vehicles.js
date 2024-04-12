@@ -100,8 +100,8 @@ router.get("/mobile/:mobile", async function (req, res, next) {
  */
 router.get("/status/:status", async function (req, res, next) {
   try {
-    const vehicles = await Vehicle.getByStatus(req.params.status);
-    return res.json({ vehicles });
+    const vehicle = await Vehicle.getByStatus(req.params.status);
+    return res.json({ vehicle });
   } catch (err) {
     return next(err);
   }
@@ -131,6 +131,37 @@ router.patch(
       }
 
       const vehicle = await Vehicle.update(req.params.id, req.body);
+      return res.json({ vehicle });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+/** PATCH / checkout/:id  => { vehicle }
+ *
+ * Patches vehicle data to update status and check_out time.
+ *
+ *
+ * Returns { vehicle }
+ *
+ * Authorization required: login
+ */
+router.patch(
+  "/checkout/:id",
+  // ensureLoggedIn, ensureAdmin,
+  async function (req, res, next) {
+    try {
+      const validator = jsonschema.validate(req.body, vehicleUpdateSchema);
+
+      if (!validator.valid) {
+        const errs = validator.errors.map((e) => e.stack);
+
+        throw new BadRequestError(errs);
+      }
+
+      const vehicle = await Vehicle.updateVehicleStatusAndCheckout(req.params.id);
+
       return res.json({ vehicle });
     } catch (err) {
       return next(err);

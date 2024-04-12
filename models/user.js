@@ -142,6 +142,38 @@ class User {
     return user;
   }
 
+  /** Given a username, return data about user.
+   *
+   * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
+   *
+   * Throws NotFoundError if user not found.
+   **/
+  static async getById(id) {
+    const userRes = await db.query(
+      `SELECT 
+          id,
+          username,
+          first_name AS "firstName",
+          last_name AS "lastName",
+          email,
+          phone, 
+          total_parked AS "totalParked",
+          is_admin AS "isAdmin",
+          location_id AS "locationId"
+      FROM 
+          users
+      WHERE 
+          id = $1`,
+      [id]
+    );
+
+    const user = userRes.rows[0];
+
+    if (!user) throw new NotFoundError(`No user: ${id}`);
+
+    return user;
+  }
+
   /** Update user data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain
@@ -193,6 +225,38 @@ class User {
 
     delete user.password;
     return user;
+  }
+
+  static async incrementParked(username) {
+    try {
+      const query = `
+      UPDATE 
+        users
+      SET 
+        total_parked = total_parked + 1
+      WHERE 
+        username = $1
+      RETURNING
+        username,
+        first_name AS "firstName",
+        last_name AS "lastName",
+        email,
+        phone, 
+        total_parked AS "totalParked",
+        is_admin AS "isAdmin",
+        location_id AS "locationId"
+        `;
+
+      const result = await db.query(query, [username]);
+
+      const user = result.rows[0];
+
+      if (!user) throw new NotFoundError(`No user: ${username}`);
+
+      return user;
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   /** Delete given user from database; returns undefined. */

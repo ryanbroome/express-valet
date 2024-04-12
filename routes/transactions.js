@@ -33,8 +33,8 @@ router.post(
         throw new BadRequestError(errs);
       }
 
-      const transaction = await Transaction.create(req.body);
-      return res.status(201).json({ transaction });
+      const transactions = await Transaction.create(req.body);
+      return res.status(201).json({ transactions });
     } catch (err) {
       return next(err);
     }
@@ -89,10 +89,11 @@ router.get("/range", async function (req, res, next) {
  *
  * Authorization required: none
  */
-router.get("/mobile", async function (req, res, next) {
+router.get("/search/location/:locationId/mobile/:mobile", async function (req, res, next) {
   try {
-    const transaction = await Transaction.getByMobile(req.body.mobile);
-    return res.json({ transaction });
+    const transactions = await Transaction.getByMobile(req.params.locationId, req.params.mobile);
+    console.log("BACKEND transactions.getByMobile(locationId, mobile)", transactions);
+    return res.json({ transactions });
   } catch (err) {
     return next(err);
   }
@@ -118,8 +119,8 @@ router.get("/lostKeys/:locationId/:userId", async function (req, res, next) {
  */
 router.get("/:id", async function (req, res, next) {
   try {
-    const transaction = await Transaction.getById(req.params.id);
-    return res.json({ transaction });
+    const transactions = await Transaction.getById(req.params.id);
+    return res.json({ transactions });
   } catch (err) {
     return next(err);
   }
@@ -143,8 +144,8 @@ router.patch(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      const transaction = await Transaction.update(req.params.id, req.body);
-      return res.json({ transaction });
+      const transactions = await Transaction.update(req.params.id, req.body);
+      return res.json({ transactions });
     } catch (err) {
       return next(err);
     }

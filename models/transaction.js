@@ -45,9 +45,9 @@ class Transaction {
       [userId, vehicleId, locationId]
     );
 
-    const transaction = result.rows[0];
+    const transactions = result.rows[0];
 
-    return { success: `Successfully added transaction: ${transaction.id}` };
+    return { success: `Successfully added transaction: ${transactions.id}` };
   }
 
   /** GET all transactions from database
@@ -174,7 +174,6 @@ class Transaction {
    *
    * Throws error if no transactions in database
    * */
-  // *todo WOULD BE HELPFUL TO ADD STATUS argument?
   static async getAllByLocationUserId(locationId, userId) {
     const query = `
 SELECT 
@@ -289,14 +288,13 @@ LIMIT
     return transactions;
   }
 
-  /**GET transactions from database for a given vehicle.mobile, return data about transactions matching partial, may want to try running this ONCHANGE rather than ONSUBMIT. Will it filter the list of vehicles?
+  /**GET transactions from database for a given vehicle.mobile, return data about transactions matching partial, may try ONCHANGE instead of ONSUBMIT?
    *
    * returns { ...allDataColsAllTables}
    *
    * Throws NotFoundError if not found
    */
-  // *TODO HAVEN"T TESTED SINCE UPDATING LAST QUERY LINE v.vehicle_status = 'active'
-  static async getByMobile(mobile) {
+  static async getByMobile(locationId, mobile) {
     const query = `
     SELECT 
         t.id AS "transactionId",
@@ -337,10 +335,12 @@ LIMIT
     WHERE
         v.mobile ILIKE $1
     AND
-        v.vehicle_status = 'active'
+        v.vehicle_status = 'parked'
+    AND 
+        t.location_id = $2
        `;
 
-    const result = await db.query(query, [`%${mobile}%`]);
+    const result = await db.query(query, [`%${mobile}%`, locationId]);
 
     const transactions = result.rows;
 
@@ -397,11 +397,11 @@ LIMIT
       [id]
     );
 
-    const transaction = transactionRes.rows[0];
+    const transactions = transactionRes.rows[0];
 
-    if (!transaction) throw new NotFoundError(`No transaction with ID : ${id}`);
+    if (!transactions) throw new NotFoundError(`No transaction with ID : ${id}`);
 
-    return transaction;
+    return transactions;
   }
 
   /** PATCH / Update  transaction data with `data`.
@@ -437,11 +437,11 @@ LIMIT
 
     const result = await db.query(querySql, [...values, id]);
 
-    const transaction = result.rows[0];
+    const transactions = result.rows[0];
 
-    if (!transaction) throw new NotFoundError(`No transaction with ID: ${id}`);
+    if (!transactions) throw new NotFoundError(`No transaction with ID: ${id}`);
 
-    return transaction;
+    return transactions;
   }
 
   /** DELETE given transaction from database; returns undefined.
@@ -461,9 +461,9 @@ LIMIT
           id`,
       [id]
     );
-    const transaction = result.rows[0];
+    const transactions = result.rows[0];
 
-    if (!transaction) throw new NotFoundError(`No transaction with ID: ${id}`);
+    if (!transactions) throw new NotFoundError(`No transaction with ID: ${id}`);
   }
 }
 module.exports = Transaction;

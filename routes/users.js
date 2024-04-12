@@ -116,6 +116,27 @@ router.patch(
   }
 );
 
+/** PATCH / /parkOne/:username { user } => { user }
+ *
+ *
+ * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
+ *
+ * Authorization required: login && same user || admin
+ **/
+
+router.patch(
+  "/parkOne/:username",
+  //  ensureLoggedIn, loggedInUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const user = await User.incrementParked(req.params.username);
+      return res.json({ user });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 /** DELETE /:username  =>  { deleted: username }
  *
  * Authorization required: login

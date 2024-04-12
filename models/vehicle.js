@@ -50,23 +50,27 @@ class Vehicle {
    * Returns [{ ticketNum, status, mobile, color, make }, ...]
    * */
   static async findAll() {
-    const vehiclesRes = await db.query(
-      `SELECT 
-          id,
-          ticket_num AS "ticketNum",
-          check_in AS "checkIn",
-          check_out AS "checkOut",
-          vehicle_status AS "vehicleStatus",
-          mobile,
-          color,
-          make,
-          damages,
-          notes
-      FROM
-        vehicles
-      `
-    );
-    return vehiclesRes.rows;
+    try {
+      const vehiclesRes = await db.query(
+        `SELECT 
+            id,
+            ticket_num AS "ticketNum",
+            check_in AS "checkIn",
+            check_out AS "checkOut",
+            vehicle_status AS "vehicleStatus",
+            mobile,
+            color,
+            make,
+            damages,
+            notes
+        FROM
+          vehicles
+        `
+      );
+      return vehiclesRes.rows;
+    } catch (err) {
+      console.error("error occurred while getting all vehicles", err);
+    }
   }
   /** GET vehicle by ID.
    *
@@ -162,6 +166,42 @@ AND
     if (!vehicle) throw new NotFoundError(`No vehicle with: ${mobile}`);
 
     return vehicle;
+  }
+
+  static async updateVehicleStatusAndCheckout(vehicleId) {
+    const query = `
+        UPDATE 
+          vehicles
+        SET 
+          vehicle_status = 'out', check_out = CURRENT_TIMESTAMP
+        WHERE 
+          id = $1
+        RETURNING
+          id, 
+          ticket_num AS "ticketNum",
+          check_in AS "check_in",
+          check_out AS "check_out",
+          vehicle_status AS "vehicleStatus",
+          mobile,
+          color,
+          make,
+          damages, 
+          notes
+    `;
+
+    try {
+      await db.query(query, [vehicleId]);
+      const result = await db.query(query, [vehicleId]);
+
+      const vehicle = result.rows[0];
+
+      if (!vehicle) throw new NotFoundError(`No vehicle with id: ${vehicleId}`);
+
+      return vehicle;
+    } catch (err) {
+      console.error("Error updating vehicle status:", err);
+      throw new BadRequestError(`Bad Request Error with : ${vehicleId}`);
+    }
   }
 
   /** PATCH Update vehicle data with `data`.
