@@ -97,7 +97,10 @@ class Transaction {
   WHERE
       t.transaction_time >= $1 
   AND
-     t.transaction_time <= $2`;
+     t.transaction_time <= $2
+ ORDER BY 
+    t.transaction_time 
+ASC`;
 
     const startDate = `${startYear}-${startMonth}-${startDay}`;
     const endDate = `${endYear}-${endMonth}-${endDay}`;
@@ -155,10 +158,12 @@ class Transaction {
   ON
       t.location_id = l.id
   WHERE
-  t.location_id = $1
+      t.location_id = $1
   AND
-  v.vehicle_status = $2
-     `;
+     v.vehicle_status = $2
+  ORDER BY
+     v.mobile 
+  ASC`;
 
     const result = await db.query(query, [locationId, status]);
 
@@ -276,6 +281,9 @@ WHERE
     l.id = $1
 AND
    u.id = $2
+ORDER BY
+    t.id 
+DESC
 LIMIT 
   10
    `;
@@ -338,7 +346,9 @@ LIMIT
         v.vehicle_status = 'parked'
     AND 
         t.location_id = $2
-       `;
+    ORDER BY
+        v.mobile
+    ASC `;
 
     const result = await db.query(query, [`%${mobile}%`, locationId]);
 
