@@ -18,16 +18,20 @@ class User {
   static async authenticate(username, password) {
     // try to find the user first
     const result = await db.query(
-      `SELECT username,
-                  password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-                  phone, 
-                  total_parked AS "totalParked",
-                  is_admin AS "isAdmin"
-           FROM users
-           WHERE username = $1`,
+      `SELECT 
+          username,
+          password,
+          first_name AS "firstName",
+          last_name AS "lastName",
+          email,
+          phone, 
+          total_parked AS "totalParked",
+          is_admin AS "isAdmin",
+          location_id AS "locationId"
+      FROM 
+          users
+      WHERE
+          username = $1`,
       [username]
     );
 
@@ -51,7 +55,7 @@ class User {
    *
    * Throws BadRequestError on duplicates.
    **/
-  static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, isAdmin = false, locationId = 1 }) {
+  static async register({ username, password, firstName, lastName, email, phone, locationId, totalParked = 0, isAdmin = false }) {
     const duplicateCheck = await db.query(
       `SELECT username
            FROM users

@@ -11,7 +11,7 @@ class Location {
    *
    * data should be { user_id, vehicle_id, location_id }
    *
-   * Returns { success : msg }
+   * Returns { success : id }
    *
    * Throws error if user or doesn't exist already in database.
    * */

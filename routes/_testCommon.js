@@ -51,7 +51,7 @@ async function commonAfterAll() {
   Promise.all([await db.query("ROLLBACK"), await db.query(`TRUNCATE vehicles RESTART IDENTITY CASCADE`)]);
   await db.end();
 }
-
+//! maybe broken
 const u1Token = createToken({
   username: "u1",
   isAdmin: false,

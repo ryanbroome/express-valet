@@ -75,9 +75,26 @@ function loggedInUserOrAdmin(req, res, next) {
   }
 }
 
+/** Middleware to use when users locationId must match the requested locationId
+ *
+ * If not, raises Unauthorized.
+ */
+function ensureUserLocation(req, res, next) {
+  try {
+    console.log("res.locals.user", res.locals.user, "params.ID", req.params.id);
+    if (res.locals.user.locationId === req.params.id) {
+      return next();
+    }
+    throw new UnauthorizedError(`Must be same user or admin`);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
   loggedInUserOrAdmin,
+  ensureUserLocation,
 };

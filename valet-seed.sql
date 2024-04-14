@@ -15,7 +15,6 @@ VALUES
     ('U1', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U1F', 'U1L', 'U1@gmail.com', '555-123-4567', 0, FALSE, 1),
     ('U2', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U2F', 'U2L', 'U2@gmail.com', '555-123-4567', 0, FALSE, 1),
     ('U3', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U3F', 'U3L', 'U3@gmail.com', '555-123-4567', 0, FALSE, 1),
-    ('eddymunsta', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'eddy', 'munsta', 'eddy@gmail.com', '555-123-4567', 0, FALSE, 1),
     ('U4A', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U4F', 'UFL', 'admin@gmail.com', '555-123-4567', 0, TRUE, 1);
 
 -- Inserting sample vehicles

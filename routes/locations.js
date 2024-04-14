@@ -5,7 +5,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
+const { ensureLoggedIn, ensureAdmin, ensureUserLocation } = require("../middleware/auth");
 const Location = require("../models/location");
 
 const locationNewSchema = require("../schemas/locationNew.json");
@@ -21,27 +21,23 @@ const router = new express.Router();
  *
  *Authorization required: login?
  */
-router.post(
-  "/",
-  // ensureLoggedIn, ensureAdmin,
-  async function (req, res, next) {
-    try {
-      const validator = jsonschema.validate(req.body, locationNewSchema);
+router.post("/", async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, locationNewSchema);
 
-      if (!validator.valid) {
-        const errs = validator.errors.map((e) => e.stack);
-        throw new BadRequestError(errs);
-      }
-
-      // ? sitename maybe in Location.create({sitename})
-      const location = await Location.create(req.body);
-
-      return res.status(201).json({ location });
-    } catch (err) {
-      return next(err);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
     }
+
+    // ? sitename maybe in Location.create({sitename})
+    const location = await Location.create(req.body);
+
+    return res.status(201).json({ location });
+  } catch (err) {
+    return next(err);
   }
-);
+});
 
 /** GET /  ALL BY   =>
  *   { locations: [ {id, sitename }, ...] }
@@ -60,9 +56,11 @@ router.get("/", async function (req, res, next) {
 /** GET /   locationId  =>
  *   { locations: [ {id, sitename }, ...] }
  *
- * TODO Authorization required: Admin
- */
-router.get("/id/:id", async function (req, res, next) {
+ * Authorization required: login
+ * removed ensureLoggedIn
+/toggle ensureUserLocation
+*/
+router.get("/id/:id", ensureLoggedIn, async function (req, res, next) {
   try {
     const location = await Location.getById(req.params.id);
     return res.json({ location });
@@ -74,7 +72,6 @@ router.get("/id/:id", async function (req, res, next) {
 /** GET /  BY  sitename { sitename }  =>
  *   { transactions: [ {...allTablesAllData }, ...] }
  *
- * TODO Authorization required: Admin
  */
 router.get("/sitename/:sitename", async function (req, res, next) {
   try {
@@ -104,18 +101,13 @@ router.patch("/:id", async function (req, res, next) {
  *
  * Authorization: login
  */
-// *todo middleware
-router.delete(
-  "/:id",
-  // ensureLoggedIn, ensureAdmin,
-  async function (req, res, next) {
-    try {
-      await Location.remove(req.params.id);
-      return res.json({ deleted: req.params.id });
-    } catch (err) {
-      return next(err);
-    }
+router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
+  try {
+    await Location.remove(req.params.id);
+    return res.json({ deleted: req.params.id });
+  } catch (err) {
+    return next(err);
   }
-);
+});
 
 module.exports = router;

@@ -11,6 +11,7 @@
         "lastName",
         "email",
         "phone",
+        "isAdmin",
         "locationId"
     ],
     "properties": {
@@ -70,10 +71,10 @@
                 true
             ]
         },
-        "location_id": {
-            "title": "The location_id Schema",
+        "locationId": {
             "type": "integer",
-            "default": false,
+            "default": 0,
+            "title": "The locationId Schema",
             "examples": [
                 1
             ]
@@ -86,6 +87,7 @@
         "lastName": "last",
         "email": "user@gmail.com",
         "phone": "5551234567",
-        "isAdmin": true
+        "isAdmin": true,
+        "locationId": 1
     }]
 }
