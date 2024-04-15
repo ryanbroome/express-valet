@@ -10,11 +10,11 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
 
   await db.query(`
-  INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages)
+  INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)
   VALUES
-      (1001, 'Parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper'),
-      (1002, 'Parked', '987654321', 'Blue', 'Honda', 'None'),
-      (1003, 'Parked', '555555555', 'Black', 'Ford', 'Dented door')`);
+      (1001, 'Parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper', 'none'),
+      (1002, 'Parked', '987654321', 'Blue', 'Honda', 'None', 'none'),
+      (1003, 'Parked', '555555555', 'Black', 'Ford', 'Dented door', 'none')`);
 
   await db.query(
     `

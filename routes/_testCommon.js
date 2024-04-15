@@ -4,6 +4,7 @@ const db = require("../db.js");
 const User = require("../models/user");
 const Vehicle = require("../models/vehicle");
 const Transaction = require("../models/transaction");
+const Location = require("../models/location.js");
 const { createToken } = require("../helpers/tokens");
 
 async function commonBeforeAll() {
@@ -13,28 +14,35 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM vehicles");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM transactions");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM locations");
 
   Promise.all([
+    await Location.create({
+      sitename: "testLocation",
+    }),
     await Vehicle.create({
       ticketNum: 1,
       vehicleStatus: "parked",
-      mobile: "555-123-4567",
+      mobile: "5551234567",
       color: "black",
       make: "honda",
       damages: "scratch",
       notes: "manual trans",
     }),
     await User.register({
-      username: "u1",
+      username: "U1",
       password: "password",
       firstName: "first",
       lastName: "last",
       email: "user1@user.com",
       phone: "555-123-4567",
+      locationId: 1,
     }),
     await Transaction.create({
-      user_id: 1,
-      vehicle_id: 1,
+      userId: 1,
+      vehicleId: 1,
+      locationId: 1,
     }),
   ]);
 }
@@ -46,15 +54,15 @@ async function commonBeforeEach() {
 async function commonAfterEach() {
   await db.query("ROLLBACK");
 }
-// ?commonAfterAll()? what does this do? TRUNCATE? RESTART IDENTITY CASCADE
+
 async function commonAfterAll() {
   Promise.all([await db.query("ROLLBACK"), await db.query(`TRUNCATE vehicles RESTART IDENTITY CASCADE`)]);
   await db.end();
 }
-//! maybe broken
+
 const u1Token = createToken({
-  username: "u1",
-  isAdmin: false,
+  username: "U1",
+  password: "password",
 });
 const testToken = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluVXNlciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5Njk2MzI5OX0.jXSjBR_BLkIpeYzosNz-cmTKfvopMNynadatC3BPgGo`;
 

@@ -6,8 +6,8 @@ const { authenticateJWT, ensureLoggedIn } = require("./auth");
 // '
 
 const { SECRET_KEY } = require("../config");
-const testJwt = jwt.sign({ username: "test", isAdmin: false }, SECRET_KEY);
-const badJwt = jwt.sign({ username: "test", isAdmin: false }, "wrong");
+const testJwt = jwt.sign({ username: "test", locationId: 1, isAdmin: false }, SECRET_KEY);
+const badJwt = jwt.sign({ username: "test", locationId: 1, isAdmin: false }, "wrong");
 
 describe("authenticateJWT", function () {
   test("works: via header", function () {
@@ -23,6 +23,7 @@ describe("authenticateJWT", function () {
     expect(res.locals).toEqual({
       user: {
         iat: expect.any(Number),
+        locationId: 1,
         username: "test",
         isAdmin: false,
       },

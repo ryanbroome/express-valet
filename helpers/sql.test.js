@@ -1,7 +1,6 @@
-// TESTS  sqlForPartialUpdate, written by RB - Top to Bottom
-const { sqlForPartialUpdate } = require("./sql.js");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 const db = require("../db");
-// '
+
 describe("tests sqlForPartialUpdate", function () {
   // Declare variables  for testing
   let userDataToUpdate;
@@ -34,12 +33,4 @@ describe("tests sqlForPartialUpdate", function () {
     expect(setCols).toEqual('"first_name"=$1, "last_name"=$2');
     expect(values).toEqual([undefined, undefined]);
   });
-
-  //   test("fails - jsToSql: sqlForPartialUpdate", async function () {
-  //      ?Mentor - How would i write a test for no data. Can not seem to figure out how to say expect this to throw an error.
-  //      ? Mentor - My first approach at this testing was to call the API routes that use sqlForPartialUpdate, but i got confused trying to make that work. I tried using hardcoded user data, then create a token then make the request but I could not get the token to work due to await not working.
-  //      const { setCols, values } = sqlForPartialUpdate(noDataToUpdate, jsToSql);
-  //     const response = sqlForPartialUpdate(noDataToUpdate, jsToSql);
-  //   expect(response).toBe(expect.any(ErrorEvent));
-  //   });
 });

@@ -92,7 +92,6 @@ router.get("/range", async function (req, res, next) {
 router.get("/search/location/:locationId/mobile/:mobile", async function (req, res, next) {
   try {
     const transactions = await Transaction.getByMobile(req.params.locationId, req.params.mobile);
-    console.log("BACKEND transactions.getByMobile(locationId, mobile)", transactions);
     return res.json({ transactions });
   } catch (err) {
     return next(err);
