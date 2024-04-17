@@ -5,9 +5,13 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM users");
+  // noinspection SqlWithoutWhere
   await db.query("DELETE FROM vehicles");
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
+  await db.query("DELETE FROM transactions");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM locations");
 
   await db.query(`
   INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)

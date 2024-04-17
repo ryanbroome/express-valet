@@ -2,8 +2,7 @@
 
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError.js");
-const Company = require("./company.js");
-const Job = require("./job.js");
+const Transaction = require("./transaction.js");
 const { commonBeforeAll, commonBeforeEach, commonAfterEach, commonAfterAll } = require("./_testCommon.js");
 
 beforeAll(commonBeforeAll);
@@ -13,39 +12,42 @@ afterAll(commonAfterAll);
 
 /************************************** create */
 
-describe("create", function () {
-  const newCompany = {
-    handle: "new",
-    name: "New",
-    description: "New Description",
-    numEmployees: 1,
-    logoUrl: "http://new.img",
+describe("Transaction: create Transaction", function () {
+  const newTransaction = {
+    userId: 1,
+    vehicleId: 1,
+    locationId: 1,
   };
-
-  test("works", async function () {
-    let company = await Company.create(newCompany);
-    expect(company).toEqual(newCompany);
+  // todo LeftOffHere
+  test("Transaction: works", async function () {
+    let transaction = await Transaction.create(newTransaction);
+    expect(transaction).toEqual(newTransaction);
 
     const result = await db.query(
-      `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
-           WHERE handle = 'new'`
+      `SELECT 
+          user_id AS "userId",
+          vehicle_id AS "vehicleId",
+          location_id AS "locationId"
+      FROM
+          locations
+      WHERE 
+          id = $1`,
+      [transaction.data.id]
     );
+
     expect(result.rows).toEqual([
       {
-        handle: "new",
-        name: "New",
-        description: "New Description",
-        num_employees: 1,
-        logo_url: "http://new.img",
+        userId: 1,
+        vehicleId: 1,
+        locationId: 1,
       },
     ]);
   });
 
-  test("bad request with dupe", async function () {
+  test("Transaction: bad request with dupe", async function () {
     try {
-      await Company.create(newCompany);
-      await Company.create(newCompany);
+      await Transaction.create(newCompany);
+      await Transaction.create(newCompany);
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -55,16 +57,14 @@ describe("create", function () {
 
 /************************************** findAll */
 
-describe("findAll", function () {
-  test("works: no filter", async function () {
-    let companies = await Company.findAll();
-    expect(companies).toEqual([
+describe("Transaction: findAll", function () {
+  test("Transaction works: no filter", async function () {
+    let transactions = await Company.findAll();
+    expect(transactions).toEqual([
       {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
+        userId: 1,
+        vehicleId: 1,
+        locationId: 1,
       },
       {
         handle: "c2",
@@ -85,23 +85,15 @@ describe("findAll", function () {
 });
 
 /************************************** findPartial */
-describe("GET companies by partial name", function () {
-  test("works: filter", async function () {
-    let companies = await Company.getPartial("1");
-    expect(companies).toEqual([
-      {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
-      },
-    ]);
+describe("GET transaction by partial mobile", function () {
+  test("Transaction: works: filter", async function () {
+    let transactions = await Transaction.getPartial("1");
+    expect(transactions).toEqual([{ userId: 1, vehicleId: 1, locationId: 1 }]);
   });
-  test("bad request Not Found Error: filter", async function () {
+  test("Transaction: bad request Not Found Error: filter", async function () {
     try {
-      let companies = await Company.getPartial("4");
-      expect(companies.length).toEqual(0);
+      let transactions = await Transaction.getPartial("4");
+      expect(transactions.length).toEqual(0);
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
@@ -109,7 +101,7 @@ describe("GET companies by partial name", function () {
 });
 
 /************************************** findNameMin */
-describe("GET companies by partial name + min employees", function () {
+describe("GET transactinos by partial mobile + min employees", function () {
   test("works: filter", async function () {
     let companies = await Company.getNameMin("C", 2);
     expect(companies).toEqual([
