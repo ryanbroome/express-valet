@@ -47,7 +47,7 @@ class Transaction {
 
     const transactions = result.rows[0];
 
-    return { success: `Successfully added transaction: ${transactions.id}` };
+    return { success: transactions.id };
   }
 
   /** GET all transactions from database
@@ -403,7 +403,7 @@ LIMIT
   ON
       t.location_id = l.id
   WHERE
-  t.id = $1`,
+        t.id = $1`,
       [id]
     );
 
@@ -429,6 +429,7 @@ LIMIT
     const { setCols, values } = sqlForPartialUpdate(data, {
       userId: "user_id",
       vehicleId: "vehicle_id",
+      locationId: "location_id",
     });
 
     const idVarIdx = "$" + (values.length + 1);
@@ -442,6 +443,7 @@ LIMIT
         id, 
         user_id AS "userId",
         vehicle_id AS "vehicleId",
+        location_id AS "locationId",
         transaction_time AS "transactionTime"
         `;
 

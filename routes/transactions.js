@@ -98,7 +98,7 @@ router.get("/search/location/:locationId/mobile/:mobile", async function (req, r
   }
 });
 
-/** GET /  LOST KEYS  locationId, USERID =>
+/** GET /  LOST KEYS  locationId, userId =>
  *   { transactions: [ {...allTablesAllData }, ...] }
  *
  * TODO Authorization required: Admin
