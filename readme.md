@@ -2,7 +2,7 @@
 
 ## Express Backend API Documentation
 
-This backend API provides endpoints for managing valet parking locations, vehicles, transactions, users with authentication, and user management. It allows to build either a data analyst dashboard and an interactive front end for valets to process vehicles.
+This backend API provides endpoints for managing Park-Pilot, valet parking locations, vehicles, users with authentication, and user management. It allows to build either a data analyst dashboard and an interactive front end for valets to process vehicles.
 
 ## Table of Contents
 
