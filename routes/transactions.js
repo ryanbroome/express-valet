@@ -27,7 +27,9 @@ router.post(
     // ensureLoggedIn, ensureAdmin,
     async function (req, res, next) {
         try {
+            // console.log("REQ.BODY =>", req.body);
             const validator = jsonschema.validate(req.body, transactionNewSchema);
+
             if (!validator.valid) {
                 const errs = validator.errors.map((e) => e.stack);
                 throw new BadRequestError(errs);

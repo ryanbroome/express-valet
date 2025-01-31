@@ -217,7 +217,8 @@ class User {
         SET ${setCols} 
         WHERE 
             username = ${usernameVarIdx} 
-        RETURNING 
+        RETURNING
+            id, 
             username,
             first_name AS "firstName",
             last_name AS "lastName",
