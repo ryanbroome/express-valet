@@ -4,9 +4,9 @@
 
 const express = require("express");
 const cors = require("cors");
-// *
-const path = require("path");
-// *
+// // *
+// const path = require("path");
+// // *
 
 const { NotFoundError } = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
@@ -31,21 +31,10 @@ app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/locations", locationRoutes);
 
-// *
-app.use(express.static(path.join(__dirname + `client/build`)));
-// *
-
 /**  Handle 404 errors */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
 });
-
-// *
-//  the "catchall" handler: for any request that doesn't match one above. send back React's index.html file
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + `/client/build/index.html`));
-});
-// *
 
 //   Catch all generic error handler
 app.use(function (err, req, res, next) {
