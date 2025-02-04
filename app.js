@@ -20,7 +20,18 @@ const locationRoutes = require("./routes/locations");
 const morgan = require("morgan");
 const app = express();
 
-app.use(cors());
+app.use(
+    cors(
+        // *
+        {
+            origin: ["https://parkpilot.onrender.com", "http://localhost:3000"],
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            credentials: true,
+        }
+        // *
+    )
+);
+
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
