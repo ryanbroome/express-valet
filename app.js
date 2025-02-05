@@ -25,7 +25,7 @@ app.use(
         // *
         {
             origin: ["https://parkpilot.onrender.com", "http://localhost:3000"],
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
             credentials: true,
         }
         // *
@@ -41,6 +41,14 @@ app.use("/users", usersRoutes);
 app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/locations", locationRoutes);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "client/build")));
+
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 
 /**  Handle 404 errors */
 app.use(function (req, res, next) {
