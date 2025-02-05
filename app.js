@@ -5,7 +5,7 @@
 const express = require("express");
 const cors = require("cors");
 // // *
-// const path = require("path");
+const path = require("path");
 // // *
 
 const { NotFoundError } = require("./expressError");
@@ -21,15 +21,11 @@ const morgan = require("morgan");
 const app = express();
 
 app.use(
-    cors(
-        // *
-        {
-            origin: ["https://parkpilot.onrender.com", "http://localhost:3000"],
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-            credentials: true,
-        }
-        // *
-    )
+    cors({
+        origin: ["https://parkpilot.onrender.com", "http://localhost:3000"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        credentials: true,
+    })
 );
 
 app.use(express.json());
