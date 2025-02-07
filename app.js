@@ -38,6 +38,11 @@ app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/locations", locationRoutes);
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    next(err);
+});
+
 /**  Handle 404 errors */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
