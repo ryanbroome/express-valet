@@ -15,13 +15,17 @@ const db = new Pool({
     max: 20,
 });
 
-// Add connection monitoring
 db.on("connect", () => {
     console.log("Database connected");
+    // Log database name without credentials
+    const dbName = getDatabaseUri().split("/").pop();
+    console.log(`Connected to database: ${dbName}`);
 });
 
 db.on("error", (err) => {
-    console.error("Unexpected database error:", err);
+    console.error("Database error:", {
+        code: err.code,
+        message: err.message,
+        detail: err.detail,
+    });
 });
-
-module.exports = db;
