@@ -1,0 +1,25 @@
+THIS WAS USED IN db.js BEFORE I SWITCH, THIS IS JUST IN CASE IT DOESN"T WORK AND NEED TO REVERT AND NOT LOSE IT JUST COPY AND PASTE BACK INTO db.js 
+
+"use strict";
+/** Database setup for valet. */
+const { Client } = require("pg");
+const { getDatabaseUri } = require("./config");
+
+let db;
+
+if (process.env.NODE_ENV === "production") {
+  db = new Client({
+    connectionString: getDatabaseUri(),
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+} else {
+  db = new Client({
+    connectionString: getDatabaseUri(),
+  });
+}
+
+db.connect();
+
+module.exports = db;
