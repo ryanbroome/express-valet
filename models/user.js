@@ -144,7 +144,7 @@ class User {
 
         const user = userRes.rows[0];
 
-        if (!user) throw new NotFoundError(`No user: ${username}`);
+        if (!user) throw new NotFoundError(`No user with username: ${username}`);
 
         return user;
     }
@@ -176,7 +176,7 @@ class User {
 
         const user = userRes.rows[0];
 
-        if (!user) throw new NotFoundError(`No user: ${id}`);
+        if (!user) throw new NotFoundError(`No user with ID: ${id}`);
 
         return user;
     }
@@ -231,7 +231,7 @@ class User {
         const result = await db.query(querySql, [...values, username]);
         const user = result.rows[0];
 
-        if (!user) throw new NotFoundError(`No user: ${username}`);
+        if (!user) throw new NotFoundError(`No user with username: ${username}`);
 
         delete user.password;
         return user;

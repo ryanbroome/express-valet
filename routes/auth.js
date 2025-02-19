@@ -10,7 +10,7 @@ const router = new express.Router();
 const { createToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, ExpressError } = require("../expressError");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -19,24 +19,27 @@ const { BadRequestError } = require("../expressError");
  * Authorization required: none
  */
 router.post("/token", async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, userAuthSchema);
+    try {
+        const validator = jsonschema.validate(req.body, userAuthSchema);
+        if (!validator.valid) {
+            throw new BadRequestError(
+                "Validation failed",
+                validator.errors.map((e) => e.stack)
+            );
+            // const errs = validator.errors.map((e) => e.stack);
+            // throw new BadRequestError(errs);
+        }
 
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
+        const { username, password } = req.body;
+        const user = await User.authenticate(username, password);
+        const token = createToken(user);
+        return res.json({ token });
+    } catch (err) {
+        if (err instanceof ExpressError) {
+            return res.status(err.status).json(err.formatResponse());
+        }
+        return next(err);
     }
-
-    const { username, password } = req.body;
-
-    const user = await User.authenticate(username, password);
-
-    const token = createToken(user);
-
-    return res.json({ token });
-  } catch (err) {
-    return next(err);
-  }
 });
 
 /** POST /auth/register:   { user } => { token }
@@ -48,22 +51,24 @@ router.post("/token", async function (req, res, next) {
  * Authorization required: none
  */
 router.post("/register", async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, userRegisterSchema);
+    try {
+        const validator = jsonschema.validate(req.body, userRegisterSchema);
 
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
+        if (!validator.valid) {
+            throw new BadRequestError(
+                "Validation failed",
+                validator.errors.map((e) => e.stack)
+            );
+        }
+        const newUser = await User.register({ ...req.body });
+        const token = createToken(newUser);
+        return res.status(201).json({ token });
+    } catch (err) {
+        if (err instanceof ExpressError) {
+            return res.status(err.status).json(err.formatResponse());
+        }
+        return next(err);
     }
-
-    const newUser = await User.register({ ...req.body });
-
-    const token = createToken(newUser);
-
-    return res.status(201).json({ token });
-  } catch (err) {
-    return next(err);
-  }
 });
 
 module.exports = router;

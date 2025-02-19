@@ -24,19 +24,19 @@ class ExpressError extends Error {
 }
 
 class NotFoundError extends ExpressError {
-    constructor(message = "Resource not found") {
+    constructor(message = "Resource not found, Not Found Error") {
         super(message, 404);
     }
 }
 
 class UnauthorizedError extends ExpressError {
-    constructor(message = "Invalid credentials") {
+    constructor(message = "Invalid credentials, Unauthorized Error") {
         super(message, 401);
     }
 }
 
 class BadRequestError extends ExpressError {
-    constructor(message = "Invalid request", errors = []) {
+    constructor(message = "Invalid request, Bad Request Error", errors = []) {
         super(message, 400);
         this.errors = errors;
     }
