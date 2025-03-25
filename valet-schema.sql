@@ -1,10 +1,10 @@
 -- Schema for valet application
-CREATE TABLE locations (
+CREATE TABLE IF NOT EXISTS locations (
     id SERIAL PRIMARY KEY,
     siteName TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(25) UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE users (
 );
 
 -- vehicle_status may need to be fixed, to make a default value of parked with every initial entry
-CREATE TABLE vehicles (
+CREATE TABLE IF NOT EXISTS vehicles (
     id SERIAL PRIMARY KEY,
     ticket_num INTEGER,
     vehicle_status TEXT DEFAULT 'parked',
@@ -32,7 +32,7 @@ CREATE TABLE vehicles (
     notes TEXT
 );
 
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

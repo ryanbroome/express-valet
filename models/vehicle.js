@@ -7,24 +7,24 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for vehicles. */
 
 class Vehicle {
-  /** POST Create a vehicle (from data), update db, return new vehicle data.
-   *
-   * data should be { ticketNum, status, mobile, color, make }
-   *
-   * Returns { ticketNum, status, mobile, color, make }
-   *
-   * Throws BadRequestError if vehicle mobile already in database.
-   * */
-  static async create({ ticketNum, vehicleStatus, mobile, color, make, damages, notes }) {
-    const duplicateCheck = await db.query(
-      `SELECT *
+    /** POST Create a vehicle (from data), update db, return new vehicle data.
+     *
+     * data should be { ticketNum, status, mobile, color, make }
+     *
+     * Returns { ticketNum, status, mobile, color, make }
+     *
+     * Throws BadRequestError if vehicle mobile already in database.
+     * */
+    static async create({ ticketNum, vehicleStatus, mobile, color, make, damages, notes }) {
+        const duplicateCheck = await db.query(
+            `SELECT *
            FROM vehicles
            WHERE mobile = $1`,
-      [mobile]
-    );
+            [mobile]
+        );
 
-    const result = await db.query(
-      `INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)
+        const result = await db.query(
+            `INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)
         VALUES  ($1, $2, $3, $4, $5, $6, $7)
         RETURNING
             id,
@@ -36,21 +36,21 @@ class Vehicle {
             damages,
             notes
            `,
-      [ticketNum, vehicleStatus, mobile, color, make, damages, notes]
-    );
-    const vehicle = result.rows[0];
+            [ticketNum, vehicleStatus, mobile, color, make, damages, notes]
+        );
+        const vehicle = result.rows[0];
 
-    return vehicle;
-  }
+        return vehicle;
+    }
 
-  /** GET Find all vehicles.
-   *
-   * Returns [{ ticketNum, status, mobile, color, make }, ...]
-   * */
-  static async findAll() {
-    try {
-      const vehiclesRes = await db.query(
-        `SELECT 
+    /** GET Find all vehicles.
+     *
+     * Returns [{ ticketNum, status, mobile, color, make }, ...]
+     * */
+    static async findAll() {
+        try {
+            const vehiclesRes = await db.query(
+                `SELECT 
             id,
             ticket_num AS "ticketNum",
             check_in AS "checkIn",
@@ -64,19 +64,19 @@ class Vehicle {
         FROM
           vehicles
         `
-      );
-      return vehiclesRes.rows;
-    } catch (err) {
-      console.error("error occurred while getting all vehicles", err);
+            );
+            return vehiclesRes.rows;
+        } catch (err) {
+            console.error("error occurred while getting all vehicles", err);
+        }
     }
-  }
-  /** GET vehicle by ID.
-   *
-   * Returns [{ ticketNum, status, mobile, color, make, damages, notes }, ...]
-   * */
-  static async getById(id) {
-    const vehicleRes = await db.query(
-      `SELECT 
+    /** GET vehicle by ID.
+     *
+     * Returns [{ ticketNum, status, mobile, color, make, damages, notes }, ...]
+     * */
+    static async getById(id) {
+        const vehicleRes = await db.query(
+            `SELECT 
           id,
           ticket_num AS "ticketNum",
           check_in AS "checkIn",
@@ -92,18 +92,18 @@ class Vehicle {
       WHERE 
           id = $1
     `,
-      [id]
-    );
+            [id]
+        );
 
-    const vehicle = vehicleRes.rows[0];
-    if (!vehicle) throw new NotFoundError(`No vehicle with ID : ${id}`);
-    return vehicle;
-  }
+        const vehicle = vehicleRes.rows[0];
+        if (!vehicle) throw new NotFoundError(`No vehicle with ID : ${id}`);
+        return vehicle;
+    }
 
-  /** GET Find vehicles by status**/
-  static async getByStatus(status) {
-    const vehicleRes = await db.query(
-      `SELECT 
+    /** GET Find vehicles by status**/
+    static async getByStatus(status) {
+        const vehicleRes = await db.query(
+            `SELECT 
           id,
           ticket_num AS "ticketNum",
           check_in AS "checkIn",
@@ -119,23 +119,23 @@ class Vehicle {
       WHERE 
           vehicle_status = $1
     `,
-      [status]
-    );
+            [status]
+        );
 
-    const vehicles = vehicleRes.rows;
-    if (!vehicles) throw new NotFoundError(`No vehicles with status : ${status}`);
-    return vehicles;
-  }
+        const vehicles = vehicleRes.rows;
+        if (!vehicles) throw new NotFoundError(`No vehicles with status : ${status}`);
+        return vehicles;
+    }
 
-  /** GET Given a vehicle partial mobile, return data about vehicle.
-   *
-   * Returns {}
-   *
-   * Throws NotFoundError if not found.
-   **/
-  static async getByMobile(mobile) {
-    const vehicleRes = await db.query(
-      `
+    /** GET Given a vehicle partial mobile, return data about vehicle.
+     *
+     * Returns {}
+     *
+     * Throws NotFoundError if not found.
+     **/
+    static async getByMobile(mobile) {
+        const vehicleRes = await db.query(
+            `
 SELECT
            id,
            ticket_num AS "ticketNum",
@@ -156,18 +156,18 @@ ILIKE
 AND 
           vehicle_status = 'parked'
           `,
-      [`%${mobile}%`]
-    );
+            [`%${mobile}%`]
+        );
 
-    const vehicle = vehicleRes.rows;
+        const vehicle = vehicleRes.rows;
 
-    if (!vehicle) throw new NotFoundError(`No vehicle with: ${mobile}`);
+        if (!vehicle) throw new NotFoundError(`No vehicle with: ${mobile}`);
 
-    return vehicle;
-  }
+        return vehicle;
+    }
 
-  static async updateVehicleStatusAndCheckout(vehicleId) {
-    const query = `
+    static async updateVehicleStatusAndCheckout(vehicleId) {
+        const query = `
         UPDATE 
           vehicles
         SET 
@@ -187,42 +187,42 @@ AND
           notes
     `;
 
-    try {
-      await db.query(query, [vehicleId]);
-      const result = await db.query(query, [vehicleId]);
+        try {
+            await db.query(query, [vehicleId]);
+            const result = await db.query(query, [vehicleId]);
 
-      const vehicle = result.rows[0];
+            const vehicle = result.rows[0];
 
-      if (!vehicle) throw new NotFoundError(`No vehicle with id: ${vehicleId}`);
+            if (!vehicle) throw new NotFoundError(`No vehicle with id: ${vehicleId}`);
 
-      return vehicle;
-    } catch (err) {
-      console.error("Error updating vehicle status:", err);
-      throw new BadRequestError(`Bad Request Error with : ${vehicleId}`);
+            return vehicle;
+        } catch (err) {
+            console.error("Error updating vehicle status:", err);
+            throw new BadRequestError(`Bad Request Error with : ${vehicleId}`);
+        }
     }
-  }
 
-  /** PATCH Update vehicle data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: {vehicleStatus, checkOut, ticketNum... }
-   *
-   * Returns {*}
-   *
-   * Throws NotFoundError if not found.
-   */
-  static async update(id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {
-      vehicleStatus: "vehicle_status",
-      ticketNum: "ticket_num",
-      checkOut: "check_out",
-    });
+    /** PATCH Update vehicle data with `data`.
+     *
+     * This is a "partial update" --- it's fine if data doesn't contain all the
+     * fields; this only changes provided ones.
+     *
+     * Data can include: {vehicleStatus, checkOut, ticketNum... }
+     *
+     * Returns {*}
+     *
+     * Throws NotFoundError if not found.
+     */
+    static async update(id, data) {
+        const { setCols, values } = sqlForPartialUpdate(data, {
+            vehicleStatus: "vehicle_status",
+            ticketNum: "ticket_num",
+            checkOut: "check_out",
+        });
 
-    const handleVarIdx = "$" + (values.length + 1);
-    // checkout should be current timestamp, need to figure out how to make checkout a currentTimestamp
-    const querySql = `UPDATE vehicles 
+        const handleVarIdx = "$" + (values.length + 1);
+        // checkout should be current timestamp, need to figure out how to make checkout a currentTimestamp
+        const querySql = `UPDATE vehicles 
                       SET ${setCols} 
                       WHERE 
                             id = ${handleVarIdx} 
@@ -238,35 +238,35 @@ AND
                             damages, 
                             notes`;
 
-    const result = await db.query(querySql, [...values, id]);
-    const vehicle = result.rows[0];
+        const result = await db.query(querySql, [...values, id]);
+        const vehicle = result.rows[0];
 
-    if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
+        if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
 
-    return vehicle;
-  }
+        return vehicle;
+    }
 
-  /** DELETE given vehicle from database; returns undefined.
-   *
-   * Throws NotFoundError if vehicle not found.
-   **/
-  static async remove(id) {
-    const result = await db.query(
-      `DELETE
+    /** DELETE given vehicle from database; returns undefined.
+     *
+     * Throws NotFoundError if vehicle not found.
+     **/
+    static async remove(id) {
+        const result = await db.query(
+            `DELETE
         FROM 
             vehicles
         WHERE 
            id = $1
         RETURNING 
             id`,
-      [id]
-    );
+            [id]
+        );
 
-    const vehicle = result.rows[0];
+        const vehicle = result.rows[0];
 
-    if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
-  }
-  i;
+        if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
+    }
+    i;
 }
 
 module.exports = Vehicle;

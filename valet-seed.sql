@@ -2,19 +2,21 @@
 --inserting sample locations
 INSERT INTO locations
     (siteName)
+    -- , address, phone)
 VALUES 
-    ('MCH-MAB'),
-    ('MCH-MAIN'),
-    ('MCH-ED');
+    ('Hospital Main'),
+    -- , '123 Main St', '555-123-4567'),
+    ('Hospital ED'),
+    -- , '456 Elm St', '555-987-6543'),
+    ('Hospital POB');
+    -- , '789 Oak St', '555-555-5555');
+
 
 -- test users have the password 'password'
 -- inserting sample users
-INSERT INTO users 
-    (username, password, first_name, last_name, email, phone, total_parked, is_admin, location_id)
-VALUES 
-    -- ('U1', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U1F', 'U1L', 'U1@gmail.com', '555-123-4567', 0, FALSE, 1),
+INSERT INTO users (username, password, first_name, last_name, email, phone, total_parked, is_admin, location_id)
+VALUES
     ('U1', '$2b$12$7iQHSGIDTdRjGDB6DUW0xeu3gdfmq2XVXhbXZIj.l2O6jjBQGncB.', 'U1F', 'U1L', 'U1@gmail.com', '555-123-4567', 0, FALSE, 1),
-    -- ('U2', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U2F', 'U2L', 'U2@gmail.com', '555-123-4567', 0, FALSE, 1),
     ('U2', '$2b$12$Z/tUNaI83MDHoWNxn6eNbeoLFDIP7gNgFaMiOiyB.YMBTeIhePUU.', 'U2F', 'U2L', 'U2@gmail.com', '555-123-4567', 0, FALSE, 2),
     ('U3', '$2b$12$skL41va0elF5iKUYMzUikOPQV0MRdrZYKidycSObGhAX9VrlSbIhW', 'U3F', 'U3L', 'U3@gmail.com', '555-123-4567', 0, FALSE, 3),
     ('U4A', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U4F', 'UFL', 'admin@gmail.com', '555-123-4567', 0, TRUE, 1);
@@ -23,18 +25,18 @@ VALUES
 INSERT INTO vehicles 
     (ticket_num, vehicle_status, mobile, color, make, damages, notes)
 VALUES
-    (1001, 'parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (2002, 'parked', '987654321', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (3003, 'parked', '555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (1004, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (2005, 'parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (3006, 'parked', '987654321', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (1007, 'parked', '555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (2008, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (3009, 'parked', '123456789', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (1010, 'parked', '987654321', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (2011, 'parked', '555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (3012, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (101, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
+    (102, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
+    (103, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
+    (104, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
+    (105, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
+    (106, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
+    (107, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
+    (108, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
+    (109, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
+    (110, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
+    (111, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
+    (112, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
 
 --Inserting sample transactions
 INSERT INTO transactions
@@ -52,5 +54,3 @@ VALUES
     (1, 10, 1),
     (2, 11, 2),
     (3, 12, 3);
-
-
