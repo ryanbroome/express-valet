@@ -1,5 +1,5 @@
 "use strict";
-
+//? Add a method for retrieving the data for the current date by location passed in..
 const db = require("../db");
 const { BadRequestError, NotFoundError, UnauthorizedError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
