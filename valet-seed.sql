@@ -54,3 +54,5 @@ VALUES
     (1, 10, 1),
     (2, 11, 2),
     (3, 12, 3);
+
+    -- ? TO ADD? when seeding database use this as damages for vehicles VALUES second to last item in array **[{"x":99.97265625,"y":265.44140625},{"x":321.97265625,"y":257.44140625},{"x":327.97265625,"y":240.44140625}]**
