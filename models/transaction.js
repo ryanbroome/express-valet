@@ -113,6 +113,67 @@ ASC`;
         return transactions;
     }
 
+    /** GET all transactions from database
+     *
+     * Returns [{ transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }, ...]
+     *
+     * Throws error if no transactions in database
+     * */
+    static async getTodayDataByLocation({ locationId }) {
+        const query = `
+  SELECT 
+      t.id AS "transactionId",
+      t.user_id AS "userId",
+      t.vehicle_id AS "vehicleId",
+      t.location_id AS "locationId",
+      t.transaction_time AS "transactionTime",
+      v.ticket_num AS "ticketNum",
+      v.vehicle_status AS "vehicleStatus",
+      v.check_in AS "checkIn",
+      v.mobile AS "mobile",
+      v.color AS "color",
+      v.make AS "make",
+      v.damages AS "damages",
+      v.check_out AS "checkOut",
+      v.notes AS "notes",
+      l.sitename AS "sitename",
+      u.first_name AS "firstName",
+      u.last_name AS "lastName",
+      u.phone AS "phone",
+      u.email AS "email",
+      u.total_parked AS "totalParked",
+      u.is_admin AS "isAdmin"
+  FROM 
+      transactions t
+  JOIN
+      vehicles v
+  ON
+      t.vehicle_id = v.id
+   JOIN
+      users u
+  ON
+      t.user_id = u.id
+  JOIN
+      locations l
+  ON
+      t.location_id = l.id
+  WHERE
+      t.locationId = $1 
+ ORDER BY 
+     t.transaction_time 
+ASC`;
+
+        // const startDate = `${startYear}-${startMonth}-${startDay}`;
+        // const endDate = `${endYear}-${endMonth}-${endDay}`;
+
+        const result = await db.query(query, [locationId]);
+
+        const transactions = result.rows;
+
+        if (!transactions) throw new NotFoundError(`No transactions available at locationId ${locationId}`);
+        return transactions;
+    }
+
     /** GET  transactions from database for a given location and a given status
      *
      * Returns { transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }
