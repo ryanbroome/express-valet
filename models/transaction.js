@@ -158,19 +158,18 @@ ASC`;
   ON
       t.location_id = l.id
   WHERE
-      t.locationId = $1 
+      t.location_id = $1
+  AND
+        t.transaction_time::DATE = CURRENT_DATE
  ORDER BY 
      t.transaction_time 
 ASC`;
-
-        // const startDate = `${startYear}-${startMonth}-${startDay}`;
-        // const endDate = `${endYear}-${endMonth}-${endDay}`;
 
         const result = await db.query(query, [locationId]);
 
         const transactions = result.rows;
 
-        if (!transactions) throw new NotFoundError(`No transactions available at locationId ${locationId}`);
+        if (!transactions.length) throw new NotFoundError(`No transactions available at locationId ${locationId} for today`);
         return transactions;
     }
 

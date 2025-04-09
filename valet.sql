@@ -15,7 +15,7 @@ CREATE DATABASE valet;
 \i valet-schema.sql
 
 \echo `Executing valet-seed...`
-\i valet-seed.sql
+\i valet-seed1.sql
 
 
 \echo `Starting test database setup...`
@@ -28,6 +28,6 @@ CREATE DATABASE valet_test;
 \echo `Executing valet-test-schema...`
 \i valet-schema.sql
 \echo `Executing valet-test-seed...`
-\i valet-seed.sql
+\i valet-seed1.sql
 
 \echo `Setup complete!`
