@@ -92,6 +92,27 @@ router.get("/range", async function (req, res, next) {
     }
 });
 
+/** GET /  ALL TODAY DATA BY LocationId { locationId } =>
+ *   { transactions: [ {...allTablesAllDataFromToday }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/today", async function (req, res, next) {
+    try {
+        const { locationId } = req.query;
+
+        if (!locationId) {
+            throw new BadRequestError("Missing required query parameters");
+        }
+
+        const transactions = await Transaction.getTodayDataByLocation({ locationId });
+
+        return res.json({ transactions });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 /** GET /:mobile  =>  { transaction }
  *
  *  transaction is { ...allColumnsAlDataTables }

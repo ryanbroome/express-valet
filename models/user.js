@@ -100,7 +100,8 @@ class User {
      **/
     static async findAll() {
         const result = await db.query(
-            `SELECT 
+            `SELECT
+          id, 
           username,
           first_name AS "firstName",
           last_name AS "lastName",

@@ -26,25 +26,25 @@ const router = express.Router();
  * Authorization required: login && admin
  **/
 router.post(
-  "/",
-  // ensureLoggedIn, ensureAdmin,
-  async function (req, res, next) {
-    try {
-      const validator = jsonschema.validate(req.body, userNewSchema);
+    "/",
+    // ensureLoggedIn, ensureAdmin,
+    async function (req, res, next) {
+        try {
+            const validator = jsonschema.validate(req.body, userNewSchema);
 
-      if (!validator.valid) {
-        const errs = validator.errors.map((e) => e.stack);
-        throw new BadRequestError(errs);
-      }
+            if (!validator.valid) {
+                const errs = validator.errors.map((e) => e.stack);
+                throw new BadRequestError(errs);
+            }
 
-      const user = await User.register(req.body);
-      const token = createToken(user);
+            const user = await User.register(req.body);
+            const token = createToken(user);
 
-      return res.status(201).json({ user, token });
-    } catch (err) {
-      return next(err);
+            return res.status(201).json({ user, token });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
 /** GET /  ALL => { users: [ {username, firstName, lastName, email }, ... ] }
@@ -55,35 +55,54 @@ router.post(
  **/
 // todo update middleware token should be in request header when making requests
 router.get(
-  "/",
-  /**ensureLoggedIn, ensureAdmin,*/
-  async function (req, res, next) {
-    try {
-      const users = await User.findAll();
-      return res.json({ users });
-    } catch (err) {
-      return next(err);
+    "/",
+    /**ensureLoggedIn, ensureAdmin,*/
+    async function (req, res, next) {
+        try {
+            const users = await User.findAll();
+            return res.json({ users });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
-/** GET / :username => { user }
+/** GET /username/:username => { user }
  *
  * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
  *
  * !Authorization required: login
  **/
 router.get(
-  "/:username",
-  // ensureLoggedIn, loggedInUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      const user = await User.get(req.params.username);
-      return res.json({ user });
-    } catch (err) {
-      return next(err);
+    "/username/:username",
+    // ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            const user = await User.get(req.params.username);
+            return res.json({ user });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
+);
+
+/** GET /id/ :id => { user }
+ *
+ * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
+ *
+ * !Authorization required: login
+ **/
+router.get(
+    "/id/:id",
+    // ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            const user = await User.getById(req.params.id);
+            return res.json({ user });
+        } catch (err) {
+            return next(err);
+        }
+    }
 );
 
 /** PATCH / :username { user } => { user }
@@ -96,24 +115,24 @@ router.get(
  * Authorization required: login && same user || admin
  **/
 router.patch(
-  "/:username",
-  //  ensureLoggedIn, loggedInUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      const validator = jsonschema.validate(req.body, userUpdateSchema);
+    "/:username",
+    //  ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            const validator = jsonschema.validate(req.body, userUpdateSchema);
 
-      if (!validator.valid) {
-        const errs = validator.errors.map((e) => e.stack);
-        throw new BadRequestError(errs);
-      }
+            if (!validator.valid) {
+                const errs = validator.errors.map((e) => e.stack);
+                throw new BadRequestError(errs);
+            }
 
-      const user = await User.update(req.params.username, req.body);
+            const user = await User.update(req.params.username, req.body);
 
-      return res.json({ user });
-    } catch (err) {
-      return next(err);
+            return res.json({ user });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
 /** PATCH / /parkOne/:username { user } => { user }
@@ -125,16 +144,16 @@ router.patch(
  **/
 
 router.patch(
-  "/parkOne/:username",
-  //  ensureLoggedIn, loggedInUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      const user = await User.incrementParked(req.params.username);
-      return res.json({ user });
-    } catch (err) {
-      return next(err);
+    "/parkOne/:username",
+    //  ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            const user = await User.incrementParked(req.params.username);
+            return res.json({ user });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
 /** DELETE /:username  =>  { deleted: username }
@@ -142,16 +161,16 @@ router.patch(
  * Authorization required: login
  **/
 router.delete(
-  "/:username",
-  // ensureLoggedIn, loggedInUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      await User.remove(req.params.username);
-      return res.json({ deleted: req.params.username });
-    } catch (err) {
-      return next(err);
+    "/:username",
+    // ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            await User.remove(req.params.username);
+            return res.json({ deleted: req.params.username });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
 /** DELETE /:id  =>  { deleted: ID }
@@ -159,16 +178,16 @@ router.delete(
  * Authorization required: login
  **/
 router.delete(
-  "remove/:id",
-  // ensureLoggedIn, loggedInUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      await User.removeById(req.params.id);
-      return res.json({ deleted: req.params.id });
-    } catch (err) {
-      return next(err);
+    "remove/:id",
+    // ensureLoggedIn, loggedInUserOrAdmin,
+    async function (req, res, next) {
+        try {
+            await User.removeById(req.params.id);
+            return res.json({ deleted: req.params.id });
+        } catch (err) {
+            return next(err);
+        }
     }
-  }
 );
 
 module.exports = router;

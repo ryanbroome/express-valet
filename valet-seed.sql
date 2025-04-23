@@ -37,6 +37,14 @@ VALUES
     (110, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
     (111, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
     (112, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (113, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (114, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (115, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (116, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (117, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (118, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (119, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
+    (120, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
 
 --Inserting sample transactions
 INSERT INTO transactions
