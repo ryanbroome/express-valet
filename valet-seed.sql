@@ -1,66 +1,61 @@
+-- 1. Seed roles
+INSERT INTO roles (role) VALUES
+    ('valet'),
+    ('supervisor'),
+    ('manager'),
+    ('director'),
+    ('admin');
 
---inserting sample locations
-INSERT INTO locations
-    (siteName)
-    -- , address, phone)
-VALUES 
-    ('Hospital Main'),
-    -- , '123 Main St', '555-123-4567'),
-    ('Hospital ED'),
-    -- , '456 Elm St', '555-987-6543'),
-    ('Hospital POB');
-    -- , '789 Oak St', '555-555-5555');
+-- 2. Seed status
+INSERT INTO status (status) VALUES
+    ('checked_in'),
+    ('staged'),
+    ('parked'),
+    ('requested'),
+    ('retrieved'),
+    ('checked_out');
 
+-- 3. Seed regions
+INSERT INTO regions (name) VALUES
+    ('North'),
+    ('South');
 
--- test users have the password 'password'
--- inserting sample users
-INSERT INTO users (username, password, first_name, last_name, email, phone, total_parked, is_admin, location_id)
+-- 4. Seed locations (each assigned to a region)
+INSERT INTO locations (name, region_id, address, city, state, zip_code, phone) VALUES
+    ('Hospital', 1, '123 Main St', 'Safety Harbor', 'FL', '34695', '555-333-1234'),
+    ('Dealership', 2, '456 South St', 'Miami', 'FL', '90002', '555-333-4321');
+
+-- 5. Seed podiums (3 per location)
+INSERT INTO podiums (name, location_id) VALUES
+    ('Main Entrance', 1),
+    ('Medical Arts Building', 1),
+    ('Emergency Department', 1),
+    ('Service', 2),
+    ('Sales', 2),
+    ('Parts', 2);
+
+-- 6. Seed users
+INSERT INTO users (username, password, first_name, last_name, email, phone, total_parked, role_id, podium_id) VALUES
+    ('manager', '$2b$12$BLPVziFEloBat.LYw9ujaOCriQYzPMOlXqRPNYHNp6DGIpBVuVLbW', 'Manager', 'One', 'manager@valet.com', '555-333-3333', 0, 3, 1),
+    ('valet1', '$2b$12$grXCgBTCKtSpWtyH07eXAegiYdQGNV0iaydfvgAAucIJxWcj8BvXS', 'Valet', 'One', 'valet1@valet.com', '555-444-4444', 0, 1, 1),
+    ('valet2', '$2b$12$12GdaOM6G6lcVVXgys1xB.eSyAJt.klydp4suGPuIhofOVLQDR/4W', 'Valet', 'Two', 'valet2@valet.com', '555-555-5555', 0, 1, 2),
+    ('valet3', '$2b$12$4cj1PfvVVBU80DLHLMP5ieg6O7lfpQ4SAVWnj.7kzqNC3mmU3z.ry', 'Valet', 'Three', 'valet3@valet.com', '555-666-6666', 0, 1, 3),
+    ('valet4', '$2b$12$eWUzNmK34Jo7BHkHcx/Ub.YSXrT77wSEuE1iKDw6QLa5S1I.WKGGC', 'Valet', 'Four', 'valet4@valet.com', '555-777-7777', 0, 1, 4),
+    ('valet5', '$2b$12$b0eRZNsRvtlvlzk.Mscx7uCCcMBkz5b16gT3EHWLeX.wCA70yaoKa', 'Valet', 'Five', 'valet5@valet.com', '555-888-8888', 0, 1, 5),
+    ('valet6', '$2b$12$jwTwVnGA7iMrfvvlPGYT1OsZka1aw8Va03G9X1DfRzJEWFZd4C6LK', 'Valet', 'Six', 'valet6@valet.com', '555-999-9999', 0, 1, 6),
+    ('valet7', '$2b$12$eZ1mCqJRbweE5gamt2yWeepsGKWniHHFvynlLD.c7rf3glsi2tP7G', 'Valet', 'Seven', 'valet7@valet.com', '555-000-0000', 0, 1, 1),
+    ('valet8', '$2b$12$gd9Tvt9ssdcNexxlXsopCeq5PTeLBur.Twe5483ozAF4cw4ikojk2', 'Valet', 'Eight', 'valet8@valet.com', '555-101-0101', 0, 1, 2),
+    ('valet9', '$2b$12$R8y8A1Q11iycyIY5O/UTnePSbAScGDG4iyY3.Iysf3OoFnXC6T8ZK', 'Valet', 'Nine', 'valet9@valet.com', '555-202-0202', 0, 1, 3),
+    ('valet10', '$2b$12$UPoUIk/vnlO.5xgVDqiF7uGGlrPWcutf3GVfnytFQ8i/9O.nx.2fG', 'Valet', 'Ten', 'valet10@valet.com', '555-202-0202', 0, 1, 4),
+    ('valet11', '$2b$12$Hd0z5raDhEbrPTkVJAwzre5THFFOZ3GCs3IxebEE6WkJzxpaO3uES', 'Valet', 'Eleven', 'valet11@valet.com', '555-202-0202', 0, 1, 5),
+    ('valet12', '$2b$12$sFnLgjbY/MvF4mhPYu0zie/GSglD3f0JXNwktHidZITDA6UnTyF/.', 'Valet', 'Twelve', 'valet12@valet.com', '555-202-0202', 0, 1, 6);
+
+-- 7. Seed vehicles (example)
+INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
 VALUES
-    ('U1', '$2b$12$7iQHSGIDTdRjGDB6DUW0xeu3gdfmq2XVXhbXZIj.l2O6jjBQGncB.', 'U1F', 'U1L', 'U1@gmail.com', '555-123-4567', 0, FALSE, 1),
-    ('U2', '$2b$12$Z/tUNaI83MDHoWNxn6eNbeoLFDIP7gNgFaMiOiyB.YMBTeIhePUU.', 'U2F', 'U2L', 'U2@gmail.com', '555-123-4567', 0, FALSE, 2),
-    ('U3', '$2b$12$skL41va0elF5iKUYMzUikOPQV0MRdrZYKidycSObGhAX9VrlSbIhW', 'U3F', 'U3L', 'U3@gmail.com', '555-123-4567', 0, FALSE, 3),
-    ('U4A', '$2b$12$e4C5KtET7rJRLqk7aM/MPOdIsx/sR3tYUCMDfFkvwnYIFqe74DWDe', 'U4F', 'UFL', 'admin@gmail.com', '555-123-4567', 0, TRUE, 1);
+    (1001, 1, '555-303-0303', 'Red', 'Toyota', '[{"x":222.71875,"y":143}]', 'stick shift');
 
--- Inserting sample vehicles
-INSERT INTO vehicles 
-    (ticket_num, vehicle_status, mobile, color, make, damages, notes)
+-- 8. Seed transactions (example)
+INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id)
 VALUES
-    (101, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (102, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (103, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (104, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (105, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (106, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (107, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (108, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (109, 'parked', '1234567899', 'Red', 'Toyota', 'Scratch on rear bumper', 'stick shift'),
-    (110, 'parked', '9876543211', 'Blue', 'Honda', 'None', 'do not roll down window'),
-    (111, 'parked', '5555555555', 'Black', 'Ford', 'Dented door', 'no notes'),
-    (112, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (113, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (114, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (115, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (116, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (117, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (118, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (119, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-    (120, 'parked', '5551234567', 'Black', 'Ford', 'Dented door', 'no notes');
-
---Inserting sample transactions
-INSERT INTO transactions
-    (user_id, vehicle_id, location_id)
-VALUES
-    (1, 1, 1),
-    (2, 2, 2),
-    (3, 3, 3),
-    (1, 4, 1),
-    (2, 5, 2),
-    (3, 6, 3),
-    (1, 7, 1),
-    (2, 8, 2),
-    (3, 9, 3),
-    (1, 10, 1),
-    (2, 11, 2),
-    (3, 12, 3);
-
-    -- ? TO ADD? when seeding database use this as damages for vehicles VALUES second to last item in array **[{"x":99.97265625,"y":265.44140625},{"x":321.97265625,"y":257.44140625},{"x":327.97265625,"y":240.44140625}]**
+    (1, 1, 1, 1);
