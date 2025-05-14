@@ -62,12 +62,10 @@ CREATE TABLE IF NOT EXISTS vehicles (
     id SERIAL PRIMARY KEY,
     ticket_num INTEGER,
     status_id INTEGER NOT NULL,
-    check_in TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     mobile TEXT NOT NULL,
     color TEXT,
     make TEXT,
     damages TEXT NOT NULL,
-    check_out TIMESTAMP,
     notes TEXT,
     FOREIGN KEY (status_id) REFERENCES status(id)
 );
@@ -79,9 +77,12 @@ CREATE TABLE IF NOT EXISTS transactions (
     vehicle_id INTEGER,
     podium_id INTEGER,
     location_id INTEGER,
+    status_id INTEGER NOT NULL,
     transaction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE,
     FOREIGN KEY (podium_id) REFERENCES podiums(id) ON DELETE CASCADE,
-    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
+    FOREIGN KEY (status_id) REFERENCES status(id) ON DELETE CASCADE
 );

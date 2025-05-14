@@ -53,9 +53,9 @@ INSERT INTO users (username, password, first_name, last_name, email, phone, tota
 -- 7. Seed vehicles (example)
 INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
 VALUES
-    (1001, 1, '555-303-0303', 'Red', 'Toyota', '[{"x":222.71875,"y":143}]', 'stick shift');
+    (1001, 1, '555-303-0303', 'Red', 'Volkswagen', '[{"x":222.71875,"y":143}]', 'stick shift');
 
 -- 8. Seed transactions (example)
-INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id)
+INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id, status_id, transaction_time, updated_at)
 VALUES
-    (1, 1, 1, 1);
+    (1, 1, 1, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

@@ -11,7 +11,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
     /** authenticate user with username, password.
      *
-     * Returns { username, first_name, last_name, email, phone, total_parked, is_admin}
+     * Returns { username, first_name, last_name, email, phone, total_parked, role_id, podium_id }
      *
      * Throws UnauthorizedError is user not found or wrong password.
      **/
@@ -26,8 +26,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin",
-          location_id AS "locationId"
+          role_id AS "roleId",
+          podium_id AS "podiumId"
       FROM 
           users
       WHERE
@@ -41,13 +41,13 @@ class User {
             // compare hashed password to a new hash from password
             const isValid = await bcrypt.compare(password, user.password);
             if (isValid === true) {
-                console.log("BCRYPT PASWORD =>", password);
+                // console.log("BCRYPT PASWORD =>", password);
                 delete user.password;
                 return user;
             }
         }
 
-        throw new UnauthorizedError("Invalid username/password");
+        throw new UnauthorizedError("Backend Unauthorized: Invalid username/password");
     }
 
     /** Register user with data.
@@ -56,16 +56,16 @@ class User {
      *
      * Throws BadRequestError on duplicates.
      **/
-    static async register({ username, password, firstName, lastName, email, phone, locationId, totalParked = 0, isAdmin = false }) {
+    static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, roleId, podiumId }) {
         const duplicateCheck = await db.query(
             `SELECT username
-           FROM users
-           WHERE username = $1`,
+             FROM users
+             WHERE username = $1`,
             [username]
         );
 
         if (duplicateCheck.rows[0]) {
-            throw new BadRequestError(`Duplicate username: ${username}`);
+            throw new BadRequestError(`Backend BadRequestError: Duplicate username: ${username}`);
         }
 
         const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
@@ -82,11 +82,11 @@ class User {
                 email,
                 phone,
                 total_parked,
-                is_admin,
-                location_id )
+                role_id,
+                podium_id )
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-           RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", is_admin AS "isAdmin", location_id AS "locationId"`,
-            [username, hashedPassword, firstName, lastName, email, phone, totalParked, isAdmin, locationId]
+           RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email, phone, total_parked AS "totalParked", role_id AS "roleId", podium_id AS "podiumId"`,
+            [username, hashedPassword, firstName, lastName, email, phone, totalParked, roleId, podiumId]
         );
 
         const user = result.rows[0];
@@ -96,7 +96,7 @@ class User {
 
     /** Find all users.
      *
-     * Returns [{ username, first_name, last_name, email, phone, totalParked, isAdmin, locationId }, ...]
+     * Returns [{ username, first_name, last_name, email, phone, totalParked, roleId, podiumId }, ...]
      **/
     static async findAll() {
         const result = await db.query(
@@ -108,8 +108,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin",
-          location_id AS "locationId"
+          role_id AS "roleId",
+          podium_id AS "podiumId"
       FROM 
           users
            `
@@ -120,7 +120,7 @@ class User {
 
     /** Given a username, return data about user.
      *
-     * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
+     * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
      *
      * Throws NotFoundError if user not found.
      **/
@@ -134,8 +134,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin",
-          location_id AS "locationId"
+          role_id AS "roleId",
+          podium_id AS "podiumId"
       FROM 
           users
       WHERE 
@@ -145,8 +145,55 @@ class User {
 
         const user = userRes.rows[0];
 
-        if (!user) throw new NotFoundError(`No user with username: ${username}`);
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with username: ${username}`);
 
+        return user;
+    }
+
+    static async getByPodiumId(podiumId) {
+        const userRes = await db.query(
+            `SELECT
+            id,
+            username,
+            first_name AS "firstName",
+            last_name AS "lastName",
+            email,
+            phone,
+            total_parked AS "totalParked",
+            role_id AS "roleId",
+            podium_id AS "podiumId"
+        FROM
+            users
+        WHERE
+            podium_id = $1`,
+            [podiumId]
+        );
+        const user = userRes.rows[0];
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with podiumId: ${podiumId}`);
+        return user;
+    }
+
+    /** Given a roleId. return users with that roleId */
+    static async getByRoleId(roleId) {
+        const userRes = await db.query(
+            `SELECT
+            id,
+            username,
+            first_name AS "firstName",
+            last_name AS "lastName",
+            email,
+            phone,
+            total_parked AS "totalParked",
+            role_id AS "roleId",
+            podium_id AS "podiumId"
+        FROM
+            users
+        WHERE
+            role_id = $1`,
+            [roleId]
+        );
+        const user = userRes.rows[0];
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user(s) with roleId: ${roleId}`);
         return user;
     }
 

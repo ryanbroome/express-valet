@@ -11,8 +11,7 @@
         "lastName",
         "email",
         "phone",
-        "isAdmin",
-        "locationId"
+        "roleId"
     ],
     "properties": {
         "username": {
@@ -63,18 +62,10 @@
                 "5551234567"
             ]
         },
-        "isAdmin": {
-            "type": "boolean",
-            "default": false,
-            "title": "The isAdmin Schema",
-            "examples": [
-                true
-            ]
-        },
-        "locationId": {
+        "roleId": {
             "type": "integer",
             "default": 0,
-            "title": "The locationId Schema",
+            "title": "The roleId Schema",
             "examples": [
                 1
             ]
@@ -87,7 +78,6 @@
         "lastName": "last",
         "email": "user@gmail.com",
         "phone": "5551234567",
-        "isAdmin": true,
-        "locationId": 1
+        "roleId": 1
     }]
 }
