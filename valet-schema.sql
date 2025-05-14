@@ -86,3 +86,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
     FOREIGN KEY (status_id) REFERENCES status(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS surveys (
+    id SERIAL PRIMARY KEY,
+    transaction_id INTEGER NOT NULL REFERENCES transactions(id) ON DELETE CASCADE,
+    q1_response INTEGER NOT NULL,
+    q2_response INTEGER NOT NULL,
+    q3_response INTEGER NOT NULL,
+    q4_response INTEGER NOT NULL,
+    q5_response INTEGER NOT NULL,
+    q6_response TEXT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

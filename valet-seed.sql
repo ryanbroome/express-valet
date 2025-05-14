@@ -58,4 +58,17 @@ VALUES
 -- 8. Seed transactions (example)
 INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id, status_id, transaction_time, updated_at)
 VALUES
-    (1, 1, 1, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, 1, 1, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 1, 2, 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (3, 1, 3, 1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (4, 1, 4, 1, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (5, 1, 5, 1, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+    -- 9. Seed surveys table
+    INSERT INTO surveys (transaction_id, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at)
+    VALUES
+        (1, 5, 4, 3, 2, 1, 'Great service!', CURRENT_TIMESTAMP),
+        (2, 4, 3, 2, 1, 5, 'Will recommend!', CURRENT_TIMESTAMP),
+        (3, 3, 2, 1, 5, 4, 'Satisfactory experience.', CURRENT_TIMESTAMP),
+        (4, 2, 1, 5, 4, 3, 'Could be better.', CURRENT_TIMESTAMP),
+        (5, 1, 5, 4, 3, 2, 'Not satisfied.', CURRENT_TIMESTAMP);
