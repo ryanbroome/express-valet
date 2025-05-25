@@ -1,5 +1,4 @@
 "use strict";
-//? Add a method for retrieving the data for the current date by location passed in..
 const db = require("../db");
 const { BadRequestError, NotFoundError, UnauthorizedError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
@@ -9,19 +8,21 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Transaction {
     /** POST / Create a transaction (from data), update db, return new transaction data.
      *
-     * data should be { user_id, vehicle_id, location_id }
+     * data should be { userId, vehicleId, podiumId, locationId, statusId }
      *
      * Returns { success : msg }
      *
      * Throws error if user or doesn't exist already in database.
      * */
-    static async create({ userId, vehicleId, locationId }) {
+    static async create({ userId, vehicleId, podiumId, locationId, statusId }) {
         const duplicateCheck = await db.query(
             `SELECT 
           id,
           user_id AS "userId",
           vehicle_id AS "vehicleId",
-          location_id AS "locationId"
+          location_id AS "locationId",
+          podium_id AS "podiumId",
+          status_id AS "statusId"
        FROM 
           transactions
        WHERE 
@@ -29,25 +30,29 @@ class Transaction {
        AND 
           vehicle_id = $2
         AND
-          location_id = $3`,
-            [userId, vehicleId, locationId]
+          location_id = $3
+        AND
+          podium_id = $4
+        AND
+          status_id = $5`,
+            [userId, vehicleId, locationId, podiumId, statusId]
         );
 
-        if (duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate transaction vehicle id: ${vehicleId} has already been parked by ${duplicateCheck.rows[0].userId}`);
+        if (duplicateCheck.rows[0]) throw new BadRequestError(`Backend Error: Duplicate transaction vehicle id: ${vehicleId} has already been updated by ${duplicateCheck.rows[0].userId}`);
 
         const result = await db.query(
             `INSERT INTO transactions 
-          (user_id, vehicle_id, location_id) 
-      VALUES 
-          ($1, $2, $3)
-      RETURNING
-          id`,
-            [userId, vehicleId, locationId]
+                (user_id, vehicle_id, location_id, podium_id, status_id)
+             VALUES 
+                ($1, $2, $3, $4, $5)
+            RETURNING
+                id`,
+            [userId, vehicleId, locationId, podiumId, statusId]
         );
 
-        const transactions = result.rows[0];
+        const transaction = result.rows[0];
 
-        return { success: transactions.id };
+        return { success: transaction.id };
     }
 
     /** GET all transactions from database
@@ -56,51 +61,57 @@ class Transaction {
      *
      * Throws error if no transactions in database
      * */
-    static async getAllDataByDateRange({ startYear, startMonth, startDay, endYear, endMonth, endDay }) {
+    static async getAll() {
         const query = `
   SELECT 
       t.id AS "transactionId",
       t.user_id AS "userId",
       t.vehicle_id AS "vehicleId",
+      t.podium_id AS "podiumId",
       t.location_id AS "locationId",
+      t.status_id AS "statusId",
       t.transaction_time AS "transactionTime",
-      v.ticket_num AS "ticketNum",
-      v.vehicle_status AS "vehicleStatus",
-      v.check_in AS "checkIn",
-      v.mobile AS "mobile",
-      v.color AS "color",
-      v.make AS "make",
-      v.damages AS "damages",
-      v.check_out AS "checkOut",
-      v.notes AS "notes",
-      l.sitename AS "sitename",
-      u.first_name AS "firstName",
-      u.last_name AS "lastName",
-      u.phone AS "phone",
-      u.email AS "email",
-      u.total_parked AS "totalParked",
-      u.is_admin AS "isAdmin"
+      t.updated_at AS "updatedAt",
   FROM 
       transactions t
-  JOIN
-      vehicles v
-  ON
-      t.vehicle_id = v.id
-   JOIN
-      users u
-  ON
-      t.user_id = u.id
-  JOIN
-      locations l
-  ON
-      t.location_id = l.id
+  ORDER BY 
+      t.transaction_time 
+   ASC`;
+
+        const result = await db.query(query, []);
+
+        const transactions = result.rows;
+
+        if (!transactions) throw new NotFoundError(`Backend Error: No transactions available`);
+        return transactions;
+    }
+
+    /** GET all transactions from database
+     *
+     * Returns { transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }
+     *
+     * Throws error if no transactions in database
+     * */
+    static async getAllRange({ startYear, startMonth, startDay, endYear, endMonth, endDay }) {
+        const query = `
+  SELECT 
+      t.id AS "transactionId",
+      t.user_id AS "userId",
+      t.vehicle_id AS "vehicleId",
+      t.podium_id AS "podiumId",
+      t.location_id AS "locationId",
+      t.status_id AS "statusId",
+      t.transaction_time AS "transactionTime",
+      t.updated_at AS "updatedAt",
+  FROM 
+      transactions t
+  ORDER BY 
+      t.transaction_time 
   WHERE
-      t.transaction_time >= $1 
-  AND
+      t.transaction_time >= $1
+   AND
      t.transaction_time <= $2
- ORDER BY 
-    t.transaction_time 
-ASC`;
+   ASC`;
 
         const startDate = `${startYear}-${startMonth}-${startDay}`;
         const endDate = `${endYear}-${endMonth}-${endDay}`;
@@ -109,7 +120,7 @@ ASC`;
 
         const transactions = result.rows;
 
-        if (!transactions) throw new NotFoundError(`No transactions available between ${startDate} and ${endDate}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transactions available between ${startDate} and ${endDate}`);
         return transactions;
     }
 
@@ -119,117 +130,61 @@ ASC`;
      *
      * Throws error if no transactions in database
      * */
-    static async getTodayDataByLocation({ locationId }) {
+    static async getTodayByLocation({ locationId }) {
         const query = `
-  SELECT 
-      t.id AS "transactionId",
-      t.user_id AS "userId",
-      t.vehicle_id AS "vehicleId",
-      t.location_id AS "locationId",
-      t.transaction_time AS "transactionTime",
-      v.ticket_num AS "ticketNum",
-      v.vehicle_status AS "vehicleStatus",
-      v.check_in AS "checkIn",
-      v.mobile AS "mobile",
-      v.color AS "color",
-      v.make AS "make",
-      v.damages AS "damages",
-      v.check_out AS "checkOut",
-      v.notes AS "notes",
-      l.sitename AS "sitename",
-      u.first_name AS "firstName",
-      u.last_name AS "lastName",
-      u.phone AS "phone",
-      u.email AS "email",
-      u.total_parked AS "totalParked",
-      u.is_admin AS "isAdmin"
-  FROM 
-      transactions t
-  JOIN
-      vehicles v
-  ON
-      t.vehicle_id = v.id
-   JOIN
-      users u
-  ON
-      t.user_id = u.id
-  JOIN
-      locations l
-  ON
-      t.location_id = l.id
-  WHERE
-      t.location_id = $1
-  AND
-        t.transaction_time::DATE = CURRENT_DATE
- ORDER BY 
-     t.transaction_time 
-ASC`;
+       SELECT 
+       t.id AS "transactionId",
+       t.user_id AS "userId",
+       t.vehicle_id AS "vehicleId",
+       t.location_id AS "locationId",
+       t.transaction_time AS "transactionTime"
+       FROM 
+       transactions t
+       WHERE
+       t.location_id = $1
+       AND
+       t.transaction_time::DATE = CURRENT_DATE
+       ORDER BY 
+       t.transaction_time 
+       ASC`;
 
         const result = await db.query(query, [locationId]);
 
         const transactions = result.rows;
 
-        if (!transactions.length) throw new NotFoundError(`No transactions available at locationId ${locationId} for today`);
+        if (!transactions.length) throw new NotFoundError(`Backend Error: No transactions available at locationId ${locationId} for today`);
         return transactions;
     }
 
-    /** GET  transactions from database for a given location and a given status
+    /** GET  transactions from database for a given location and a given statusId
      *
      * Returns { transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }
      *
      * Throws error if no transactions in database
      * */
-    static async getAllByLocationStatus(locationId, status) {
+    static async getByLocationStatus(locationId, statusId) {
         const query = `
-  SELECT 
-      t.id AS "transactionId",
-      t.user_id AS "userId",
-      t.vehicle_id AS "vehicleId",
-      t.location_id AS "locationId",
-      t.transaction_time AS "transactionTime",
-      v.ticket_num AS "ticketNum",
-      v.vehicle_status AS "vehicleStatus",
-      v.check_in AS "checkIn",
-      v.mobile AS "mobile",
-      v.color AS "color",
-      v.make AS "make",
-      v.damages AS "damages",
-      v.check_out AS "checkOut",
-      v.notes AS "notes",
-      l.sitename AS "sitename",
-      u.first_name AS "firstName",
-      u.last_name AS "lastName",
-      u.phone AS "phone",
-      u.email AS "email",
-      u.total_parked AS "totalParked",
-      u.is_admin AS "isAdmin"
-  FROM 
-      transactions t
-  JOIN
-      vehicles v
-  ON
-      t.vehicle_id = v.id
-   JOIN
-      users u
-  ON
-      t.user_id = u.id
-  JOIN
-      locations l
-  ON
-      t.location_id = l.id
-  WHERE
-      t.location_id = $1
-  AND
-     v.vehicle_status = $2
-  ORDER BY
-     v.mobile 
-  ASC`;
+       SELECT 
+       t.id AS "transactionId",
+       t.user_id AS "userId",
+       t.vehicle_id AS "vehicleId",
+       t.location_id AS "locationId",
+       t.transaction_time AS "transactionTime"
+       FROM 
+       transactions t
+       WHERE
+       t.location_id = $1
+       AND
+       t.status_id = $2
+       ORDER BY
+       t.transaction_time 
+       ASC`;
 
-        const result = await db.query(query, [locationId, status]);
+        const result = await db.query(query, [locationId, statusId]);
 
         const transactions = result.rows;
 
-        if (!transactions) throw new NotFoundError(`No transactions available at location ${locationId}for status ${status}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transactions available at location ${locationId} for status ${statusId}`);
         return transactions;
     }
 
@@ -239,237 +194,57 @@ ASC`;
      *
      * Throws error if no transactions in database
      * */
-    static async getAllByLocationUserId(locationId, userId) {
+    static async getByLocationUser(locationId, userId) {
         const query = `
-SELECT 
-    t.id AS "transactionId",
-    t.user_id AS "userId",
-    t.vehicle_id AS "vehicleId",
-    t.location_id AS "locationId",
-    t.transaction_time AS "transactionTime",
-    v.ticket_num AS "ticketNum",
-    v.vehicle_status AS "vehicleStatus",
-    v.check_in AS "checkIn",
-    v.mobile AS "mobile",
-    v.color AS "color",
-    v.make AS "make",
-    v.damages AS "damages",
-    v.check_out AS "checkOut",
-    v.notes AS "notes",
-    l.sitename AS "sitename",
-    u.first_name AS "firstName",
-    u.last_name AS "lastName",
-    u.phone AS "phone",
-    u.email AS "email",
-    u.total_parked AS "totalParked",
-    u.is_admin AS "isAdmin"
-FROM 
-    transactions t
-JOIN
-    vehicles v
-ON
-    t.vehicle_id = v.id
- JOIN
-    users u
-ON
-    t.user_id = u.id
-JOIN
-    locations l
-ON
-    t.location_id = l.id
-WHERE
-    l.id = $1
-AND
-    u.id = $2
-AND
-    v.vehicle_status = 'parked'
-      `;
+       SELECT 
+       t.id AS "transactionId",
+       t.user_id AS "userId",
+       t.vehicle_id AS "vehicleId",
+       t.location_id AS "locationId",
+       t.transaction_time AS "transactionTime"
+       FROM 
+       transactions t
+       WHERE
+       t.location_id = $1
+       AND
+       t.user_id = $2
+       `;
 
         const result = await db.query(query, [locationId, userId]);
 
         const transactions = result.rows;
 
-        if (!transactions) throw new NotFoundError(`No transactions available at location ${locationId}for user ${userId}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transactions available at location ${locationId} for user ${userId}`);
         return transactions;
     }
 
-    /** GET  transactions from database for a given location_id , user_id
+    /** GET transaction by id from database
      *
-     * Returns { transId, userId, vehicleId, ticketNum, mobile, color, make, damages, valetFirst, valetLast }
+     * Returns { id, user_id, vehicle_id, location_id, status_id, transaction_time, updated_at }
      *
-     * Throws error if no transactions in database
-     * */
-    static async lostKeys(locationId, userId) {
-        const query = `
-SELECT 
-    t.id AS "transactionId",
-    t.user_id AS "userId",
-    t.vehicle_id AS "vehicleId",
-    t.location_id AS "locationId",
-    t.transaction_time AS "transactionTime",
-    v.ticket_num AS "ticketNum",
-    v.vehicle_status AS "vehicleStatus",
-    v.check_in AS "checkIn",
-    v.mobile AS "mobile",
-    v.color AS "color",
-    v.make AS "make",
-    v.damages AS "damages",
-    v.check_out AS "checkOut",
-    v.notes AS "notes",
-    l.sitename AS "sitename",
-    u.first_name AS "firstName",
-    u.last_name AS "lastName",
-    u.phone AS "phone",
-    u.email AS "email",
-    u.total_parked AS "totalParked",
-    u.is_admin AS "isAdmin"
-FROM 
-    transactions t
-JOIN
-    vehicles v
-ON
-    t.vehicle_id = v.id
- JOIN
-    users u
-ON
-    t.user_id = u.id
-JOIN
-    locations l
-ON
-    t.location_id = l.id
-WHERE
-    l.id = $1
-AND
-   u.id = $2
-ORDER BY
-    t.id 
-DESC
-LIMIT 
-  5
-   `;
-
-        const result = await db.query(query, [locationId, userId]);
-
-        const transactions = result.rows;
-
-        if (!transactions) throw new NotFoundError(`No transactions available at location ${locationId}for user ${userId}`);
-        return transactions;
-    }
-
-    /**GET transactions from database for a given vehicle.mobile, return data about transactions matching partial, may try ONCHANGE instead of ONSUBMIT?
-     *
-     * returns { ...allDataColsAllTables}
-     *
-     * Throws NotFoundError if not found
-     */
-    static async getByMobile(locationId, mobile) {
-        const query = `
-    SELECT 
-        t.id AS "transactionId",
-        t.user_id AS "userId",
-        t.vehicle_id AS "vehicleId",
-        t.location_id AS "locationId",
-        t.transaction_time AS "transactionTime",
-        v.ticket_num AS "ticketNum",
-        v.vehicle_status AS "vehicleStatus",
-        v.check_in AS "checkIn",
-        v.mobile AS "mobile",
-        v.color AS "color",
-        v.make AS "make",
-        v.damages AS "damages",
-        v.check_out AS "checkOut",
-        v.notes AS "notes",
-        l.sitename AS "sitename",
-        u.first_name AS "firstName",
-        u.last_name AS "lastName",
-        u.phone AS "phone",
-        u.email AS "email",
-        u.total_parked AS "totalParked",
-        u.is_admin AS "isAdmin"
-    FROM 
-        transactions t
-    JOIN
-        vehicles v
-    ON
-        t.vehicle_id = v.id
-     JOIN
-        users u
-    ON
-        t.user_id = u.id
-    JOIN
-        locations l
-    ON
-        t.location_id = l.id
-    WHERE
-        v.mobile ILIKE $1
-    AND
-        v.vehicle_status = 'parked'
-    AND 
-        t.location_id = $2
-    ORDER BY
-        v.mobile
-    ASC `;
-
-        const result = await db.query(query, [`%${mobile}%`, locationId]);
-
-        const transactions = result.rows;
-
-        if (!transactions) throw new NotFoundError(`No transactions available with mobile : ${mobile}`);
-        return transactions;
-    }
-
-    /** GET transactions from database for a given transactionId, return data about transaction.
-   *
-   * Returns { id, user_id, vehicle_id, transaction_time}
-
-   * Throws NotFoundError if not found.
-   **/
+     * Throws NotFoundError if not found.
+     **/
     static async getById(id) {
         const transactionRes = await db.query(
             `  SELECT 
-      t.id AS "transactionId",
-      t.user_id AS "userId",
-      t.vehicle_id AS "vehicleId",
-      t.location_id AS "locationId",
-      t.transaction_time AS "transactionTime",
-      v.ticket_num AS "ticketNum",
-      v.vehicle_status AS "vehicleStatus",
-      v.check_in AS "checkIn",
-      v.mobile AS "mobile",
-      v.color AS "color",
-      v.make AS "make",
-      v.damages AS "damages",
-      v.check_out AS "checkOut",
-      v.notes AS "notes",
-      l.sitename AS "sitename",
-      u.first_name AS "firstName",
-      u.last_name AS "lastName",
-      u.phone AS "phone",
-      u.email AS "email",
-      u.total_parked AS "totalParked",
-      u.is_admin AS "isAdmin"
-  FROM 
-      transactions t
-  JOIN
-      vehicles v
-  ON
-      t.vehicle_id = v.id
-   JOIN
-      users u
-  ON
-      t.user_id = u.id
-  JOIN
-      locations l
-  ON
-      t.location_id = l.id
-  WHERE
-        t.id = $1`,
+                 t.id AS "transactionId",
+                 t.user_id AS "userId",
+                 t.vehicle_id AS "vehicleId",
+                 t.podium_id AS "podiumId",
+                 t.location_id AS "locationId",
+                 t.status_id AS "statusId",
+                 t.transaction_time AS "transactionTime",
+                 t.updated_at AS "updatedAt"
+            FROM 
+                 transactions t
+            WHERE
+                 t.id = $1`,
             [id]
         );
 
         const transactions = transactionRes.rows[0];
 
-        if (!transactions) throw new NotFoundError(`No transaction with ID : ${id}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transaction with ID : ${id}`);
 
         return transactions;
     }
@@ -479,9 +254,9 @@ LIMIT
      * This is a "partial update" --- it's fine if data doesn't contain all the
      * fields; this only changes provided ones.
      *
-     * Data can include: { user_id, vehicle_id }
+     * Data can include: { user_id, vehicle_id, podium_id, location_id, status_id }
      *
-     * Returns { id, userId, vehicleId, transactionTime }
+     * Returns { id, userId, vehicleId, transactionTime, podiumId, locationId, statusId }
      *
      * Throws NotFoundError if not found.
      */
@@ -489,7 +264,9 @@ LIMIT
         const { setCols, values } = sqlForPartialUpdate(data, {
             userId: "user_id",
             vehicleId: "vehicle_id",
+            podiumId: "podium_id",
             locationId: "location_id",
+            statusId: "status_id",
         });
 
         const idVarIdx = "$" + (values.length + 1);
@@ -503,15 +280,18 @@ LIMIT
         id, 
         user_id AS "userId",
         vehicle_id AS "vehicleId",
+        podium_id AS "podiumId",
         location_id AS "locationId",
-        transaction_time AS "transactionTime"
+        status_id AS "statusId",
+        transaction_time AS "transactionTime",
+        updated_at AS "updatedAt"
         `;
 
         const result = await db.query(querySql, [...values, id]);
 
         const transactions = result.rows[0];
 
-        if (!transactions) throw new NotFoundError(`No transaction with ID: ${id}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transaction with ID: ${id}`);
 
         return transactions;
     }
@@ -535,7 +315,7 @@ LIMIT
         );
         const transactions = result.rows[0];
 
-        if (!transactions) throw new NotFoundError(`No transaction with ID: ${id}`);
+        if (!transactions) throw new NotFoundError(`Backend Error: No transaction with ID: ${id}`);
     }
 }
 module.exports = Transaction;

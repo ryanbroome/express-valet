@@ -17,8 +17,7 @@ const router = express.Router();
 /** POST /  { user }  => { user, token }
  *
  * Adds a new user. This is not the registration endpoint --- instead, this is
- * only for admin users to add new users. The new user being added can be an
- * admin.
+ * only for admin users to create new users. The new user being added can be various roles.
  *
  * This returns the newly created user and an authentication token for them:
  *  {user: { username, firstName, lastName, email, phone, totalParked, isAdmin }, token }

@@ -7,15 +7,17 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for vehicles. */
 
 class Vehicle {
+    // Vehicle class is used to interact with the vehicles table in the database
+
     /** POST Create a vehicle (from data), update db, return new vehicle data.
      *
-     * data should be { ticketNum, status, mobile, color, make }
+     * data should be { ticketNum, statusId, mobile, color, make, damages, notes }
      *
-     * Returns { ticketNum, status, mobile, color, make }
+     * Returns { ticketNum, statusId, mobile, color, make, damages, notes }
      *
      * Throws BadRequestError if vehicle mobile already in database.
      * */
-    static async create({ ticketNum, vehicleStatus, mobile, color, make, damages, notes }) {
+    static async create({ ticketNum, statusId, mobile, color, make, damages, notes }) {
         const duplicateCheck = await db.query(
             `SELECT *
            FROM vehicles
@@ -23,29 +25,34 @@ class Vehicle {
             [mobile]
         );
 
+        if (duplicateCheck.rows[0]) {
+            throw new BadRequestError(`Backend Error: Duplicate vehicle mobile: ${mobile}`);
+        }
+
         const result = await db.query(
-            `INSERT INTO vehicles (ticket_num, vehicle_status, mobile, color, make, damages, notes)
-        VALUES  ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING
-            id,
-            ticket_num AS "ticketNum",
-            vehicle_status AS "vehicleStatus",
-            mobile,
-            color,
-            make,
-            damages,
-            notes
+            `INSERT INTO
+                vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
+             VALUES  ($1, $2, $3, $4, $5, $6, $7)
+             RETURNING
+                 id,
+                 ticket_num AS "ticketNum",
+                 status_id AS "statusId",
+                 mobile,
+                 color,
+                 make,
+                 damages,
+                 notes
            `,
-            [ticketNum, vehicleStatus, mobile, color, make, damages, notes]
+            [ticketNum, statusId, mobile, color, make, damages, notes]
         );
         const vehicle = result.rows[0];
 
         return vehicle;
     }
 
-    /** GET Find all vehicles.
+    /** GET all vehicles.
      *
-     * Returns [{ ticketNum, status, mobile, color, make }, ...]
+     * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
      * */
     static async findAll() {
         try {
@@ -53,9 +60,7 @@ class Vehicle {
                 `SELECT 
             id,
             ticket_num AS "ticketNum",
-            check_in AS "checkIn",
-            check_out AS "checkOut",
-            vehicle_status AS "vehicleStatus",
+            status_id AS "statusId",
             mobile,
             color,
             make,
@@ -65,23 +70,26 @@ class Vehicle {
           vehicles
         `
             );
+            if (vehiclesRes.rows.length === 0) {
+                throw new NotFoundError("Backend Error: No vehicles found");
+            }
             return vehiclesRes.rows;
         } catch (err) {
             console.error("error occurred while getting all vehicles", err);
+            throw err;
         }
     }
+
     /** GET vehicle by ID.
      *
-     * Returns [{ ticketNum, status, mobile, color, make, damages, notes }, ...]
+     * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
      * */
     static async getById(id) {
         const vehicleRes = await db.query(
             `SELECT 
           id,
           ticket_num AS "ticketNum",
-          check_in AS "checkIn",
-          check_out AS "checkOut",
-          vehicle_status AS "vehicleStatus",
+          status_id AS "statusId",
           mobile,
           color,
           make,
@@ -90,13 +98,13 @@ class Vehicle {
       FROM
           vehicles
       WHERE 
-          id = $1
-    `,
+          id = $1`,
             [id]
         );
 
         const vehicle = vehicleRes.rows[0];
-        if (!vehicle) throw new NotFoundError(`No vehicle with ID : ${id}`);
+
+        if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with ID : ${id}`);
         return vehicle;
     }
 
@@ -106,9 +114,7 @@ class Vehicle {
             `SELECT 
           id,
           ticket_num AS "ticketNum",
-          check_in AS "checkIn",
-          check_out AS "checkOut",
-          vehicle_status AS "vehicleStatus",
+          status_id AS "statusId",
           mobile,
           color,
           make,
@@ -117,17 +123,19 @@ class Vehicle {
       FROM
           vehicles
       WHERE 
-          vehicle_status = $1
+          status_id = $1
     `,
             [status]
         );
 
         const vehicles = vehicleRes.rows;
-        if (!vehicles) throw new NotFoundError(`No vehicles with status : ${status}`);
+
+        if (!vehicles.length) throw new NotFoundError(`Backend Error: No vehicles with status : ${status}`);
+
         return vehicles;
     }
 
-    /** GET Given a vehicle partial mobile, return data about vehicle.
+    /** GET Given a vehicle partial mobile and statusId return data about vehicle.
      *
      * Returns {}
      *
@@ -139,9 +147,7 @@ class Vehicle {
 SELECT
            id,
            ticket_num AS "ticketNum",
-           check_in AS "checkIn",
-           check_out AS "checkOut",
-           vehicle_status AS "vehicleStatus",
+           status_id AS "statusId",
            mobile,
            color,
            make,
@@ -149,57 +155,18 @@ SELECT
           notes
 FROM
           vehicles
-WHERE 
-          mobile 
-ILIKE 
-          $1
-AND 
-          vehicle_status = 'parked'
-          `,
+WHERE
+          mobile
+ILIKE
+          $1`,
             [`%${mobile}%`]
         );
 
         const vehicle = vehicleRes.rows;
 
-        if (!vehicle) throw new NotFoundError(`No vehicle with: ${mobile}`);
+        if (!vehicle.length) throw new NotFoundError(`Backend Error: No vehicle with: ${mobile}`);
 
         return vehicle;
-    }
-
-    static async updateVehicleStatusAndCheckout(vehicleId) {
-        const query = `
-        UPDATE 
-          vehicles
-        SET 
-          vehicle_status = 'out', check_out = CURRENT_TIMESTAMP
-        WHERE 
-          id = $1
-        RETURNING
-          id, 
-          ticket_num AS "ticketNum",
-          check_in AS "check_in",
-          check_out AS "check_out",
-          vehicle_status AS "vehicleStatus",
-          mobile,
-          color,
-          make,
-          damages, 
-          notes
-    `;
-
-        try {
-            await db.query(query, [vehicleId]);
-            const result = await db.query(query, [vehicleId]);
-
-            const vehicle = result.rows[0];
-
-            if (!vehicle) throw new NotFoundError(`No vehicle with id: ${vehicleId}`);
-
-            return vehicle;
-        } catch (err) {
-            console.error("Error updating vehicle status:", err);
-            throw new BadRequestError(`Bad Request Error with : ${vehicleId}`);
-        }
     }
 
     /** PATCH Update vehicle data with `data`.
@@ -215,9 +182,8 @@ AND
      */
     static async update(id, data) {
         const { setCols, values } = sqlForPartialUpdate(data, {
-            vehicleStatus: "vehicle_status",
             ticketNum: "ticket_num",
-            checkOut: "check_out",
+            statusId: "status_id",
         });
 
         const handleVarIdx = "$" + (values.length + 1);
@@ -229,9 +195,7 @@ AND
                       RETURNING 
                             id, 
                             ticket_num AS "ticketNum",
-                            check_in AS "check_in",
-                            check_out AS "check_out",
-                            vehicle_status AS "vehicleStatus",
+                            status_id AS "statusId",
                             mobile,
                             color,
                             make,
@@ -241,7 +205,7 @@ AND
         const result = await db.query(querySql, [...values, id]);
         const vehicle = result.rows[0];
 
-        if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
+        if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with id: ${id}`);
 
         return vehicle;
     }
@@ -264,9 +228,8 @@ AND
 
         const vehicle = result.rows[0];
 
-        if (!vehicle) throw new NotFoundError(`No vehicle with id: ${id}`);
+        if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with id: ${id}`);
     }
-    i;
 }
 
 module.exports = Vehicle;

@@ -61,7 +61,7 @@ router.post("/register", async function (req, res, next) {
 
         if (!validator.valid) {
             throw new BadRequestError(
-                "Validation failed",
+                "Backend BadRequestError: Validation failed",
                 validator.errors.map((e) => e.stack)
             );
         }

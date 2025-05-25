@@ -1,0 +1,43 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "required": [
+        "name",
+         "location_id",
+         "is_deleted"
+    ],
+    "properties": {
+        "id": {
+            "type": "integer",
+            "default": 0,
+            "title": "The id Schema",
+            "examples": [
+                1
+            ]
+        },
+        "name": {
+            "type": "string",
+            "default": "Unknown",
+            "title": "The name Schema",
+            "examples": [
+                "MCH-MAB"
+            ]
+        },
+        "location_id": {
+            "type": "integer",
+            "default": 1,
+            "title": "The location_id Schema",
+            "examples": [
+                1
+            ]
+        }
+    },
+    "examples": [{
+        "id": 1,
+        "name": "MCH-MAB",
+        "location_id": 1
+    }]
+}

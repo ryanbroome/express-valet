@@ -5,14 +5,13 @@
     "type": "object",
     "default": {},
     "required": [
-        "id",
         "username",
         "password",
-        "first_name",
-        "last_name",
+        "firstName",
+        "lastName",
         "email",
         "phone",
-        "is_admin"
+        "roleId"
     ],
     "properties": {
         "id": {
@@ -39,20 +38,20 @@
                 "password"
             ]
         },
-        "first_name": {
-            "title": "The first_name Schema",
+        "firstName": {
+            "title": "The firstName Schema",
             "type": "string",
             "default": "",
             "examples": [
-                "first_name"
+                "firstName"
             ]
         },
-        "last_name": {
-            "title": "The last_name Schema",
+        "lastName": {
+            "title": "The lastName Schema",
             "type": "string",
             "default": "",
             "examples": [
-                "last_name"
+                "lastName"
             ]
         },
         "email": {
@@ -71,12 +70,20 @@
                 "555-123-4567"
             ]
         },
-        "is_admin": {
-            "title": "The is_admin Schema",
-            "type": "boolean",
-            "default": false,
+        "roleId": {
+            "title": "The roleId Schema",
+            "type": "integer",
+            "default": 0,
             "examples": [
-                false
+                1
+            ]
+        },
+        "podiumId": {
+            "title": "The podiumId  Schema",
+            "type": "integer",
+            "default": 0,
+            "examples": [
+                1
             ]
         }
     },
@@ -84,10 +91,11 @@
         "id": 1,
         "username": "username",
         "password": "password",
-        "first_name": "first_name",
-        "last_name": "last_name",
+        "firstName": "firstName",
+        "lastName": "lastName",
         "email": "username@gmail.com",
         "phone": "555-123-4567",
-        "is_admin": false
+        "roleId": 1,
+        "podiumId": 1
     }]
 }

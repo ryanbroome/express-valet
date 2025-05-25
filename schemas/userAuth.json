@@ -24,28 +24,10 @@
           "examples": [
               "password"
           ]
-      },
-      "locationId": {
-          "type": "integer",
-          "default": 0,
-          "title": "The locationId Schema",
-          "examples": [
-              1
-          ]
-      },
-      "podiumId": {
-          "type": "integer",
-          "default": 0,
-          "title": "The podiumId Schema",
-          "examples": [
-              1
-          ]
       }
   },
   "examples": [{
       "username": "user1",
-      "password": "password",
-      "locationId": 1,
-      "podiumId": 1
+      "password": "password"
   }]
 }

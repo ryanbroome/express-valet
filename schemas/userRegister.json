@@ -69,6 +69,14 @@
             "examples": [
                 1
             ]
+        },
+        "podiumId": {
+            "type": "integer",
+            "default": 1,
+            "title": "The podiumId Schema",
+            "examples": [
+                1
+            ]
         }
     },
     "examples": [{
@@ -78,6 +86,7 @@
         "lastName": "last",
         "email": "user@gmail.com",
         "phone": "5551234567",
-        "roleId": 1
+        "roleId": 1,
+        "podiumId": 1
     }]
 }

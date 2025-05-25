@@ -7,170 +7,194 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for locations. */
 
 class Location {
-  /** POST / Create a location  update db, return new location data.
-   *
-   * data should be { user_id, vehicle_id, location_id }
-   *
-   * Returns { success : id }
-   *
-   * Throws error if user or doesn't exist already in database.
-   * */
-  static async create({ sitename }) {
-    const duplicateCheck = await db.query(
-      `SELECT 
+    /** POST / Create a location  update db, return new location data.
+     *
+     * data should be { user_id, vehicle_id, location_id }
+     *
+     * Returns { success : id }
+     *
+     * Throws error if user or doesn't exist already in database.
+     * */
+    static async create({ name, regionId, address, city, state, zipCode, phone }) {
+        const duplicateCheck = await db.query(
+            `SELECT 
             id,
-            sitename
+            name
        FROM 
             locations
        WHERE 
-            sitename  = $1`,
-      [sitename]
-    );
+            name  = $1`,
+            [name]
+        );
 
-    if (duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate location Alert : ${sitename} already exists`);
+        if (duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate location Alert : ${name} already exists`);
 
-    const result = await db.query(
-      `INSERT INTO locations 
-         (sitename) 
+        const result = await db.query(
+            `INSERT INTO locations 
+         (name, region_id, address, city, state, zip_code, phone) 
       VALUES 
-          ($1)
+          ($1, $2, $3, $4, $5, $6, $7)
       RETURNING
           id`,
-      [sitename]
-    );
+            [name, regionId, address, city, state, zipCode, phone]
+        );
 
-    const location = result.rows[0];
+        const location = result.rows[0];
 
-    return { success: location.id };
-  }
+        return { success: location.id };
+    }
 
-  /** GET all locations from database
-   *
-   * Returns {id, sitename }
-   *
-   * Throws error if no locations in database
-   * */
-  static async getAll() {
-    const query = `
+    /** GET all locations from database
+     *
+     * Returns {id, name, regionId, address, city, state, zipCode, phone }
+     *
+     * Throws error if no locations in database
+     * */
+    static async getAll() {
+        const query = `
         SELECT 
             id,
-            sitename
+            name,
+            region_id AS "regionId",
+            address,
+            city,
+            state,
+            zip_code AS "zipCode",
+            phone
         FROM
             locations`;
 
-    const result = await db.query(query);
+        const result = await db.query(query);
 
-    const locations = result.rows;
+        const locations = result.rows;
 
-    if (!locations) throw new NotFoundError(`No locations available`);
-    return locations;
-  }
+        if (!locations) throw new NotFoundError(`Backend Error: No locations available`);
+        return locations;
+    }
 
-  /** GET  location from database for a given id
-   *
-   * Returns { id, sitename }
-   *
-   * Throws error if no location in database
-   * */
-  static async getById(id) {
-    const query = `
+    /** GET  location from database for a given id
+     *
+     * Returns { id, name, regionId, address, city, state, zipCode, phone }
+     *
+     * Throws error if no location in database
+     * */
+    static async getById(id) {
+        const query = `
   SELECT 
         id,
-        sitename
+        name,
+        region_id AS "regionId",
+        address,
+        city,
+        state,
+        zip_code AS "zipCode",
+        phone
     FROM
         locations l
     WHERE
         l.id = $1
      `;
 
-    const result = await db.query(query, [id]);
+        const result = await db.query(query, [id]);
 
-    const location = result.rows;
+        const location = result.rows;
 
-    if (!location) throw new NotFoundError(`No locations available with ID : ${id}`);
-    return location;
-  }
+        if (!location) throw new NotFoundError(`Backend Error: No locations available with ID : ${id}`);
+        return location;
+    }
 
-  /** GET  locations from database for a given sitename
-   *    works with partial name anywhere in the sitename
-   * Returns { id, sitename }
-   *
-   * Throws error if no locations in database
-   * */
-  static async getBySitename(sitename) {
-    const query = `
+    /** GET  locations from database for a given name
+     *    works with partial name anywhere in the name
+     * Returns { id, name, regionId, address, city, state, zipCode, phone }
+     *
+     * Throws error if no locations in database
+     * */
+    static async getByName(name) {
+        const query = `
 SELECT
     id,
-    sitename
+    name,
+    region_id AS "regionId",
+    address,
+    city,
+    state,
+    zip_code AS "zipCode",
+    phone
 FROM
     locations l
 WHERE
-    l.sitename ILIKE $1
+    l.name ILIKE $1
    `;
 
-    const result = await db.query(query, [`%${sitename}%`]);
+        const result = await db.query(query, [`%${name}%`]);
 
-    const locations = result.rows;
+        const locations = result.rows;
 
-    if (!locations) throw new NotFoundError(`No locations available including sitename :  ${sitename}`);
-    return locations;
-  }
+        if (!locations) throw new NotFoundError(`Backend Error: No locations available including name :  ${name}`);
+        return locations;
+    }
 
-  /** PATCH / Update  location data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: { user_id, vehicle_id }
-   *
-   * Returns { id, userId, vehicleId, locationTime }
-   *
-   * Throws NotFoundError if not found.
-   */
-  static async update(id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {});
+    /** PATCH / Update  location data with `data`.
+     *
+     * This is a "partial update" --- it's fine if data doesn't contain all the
+     * fields; this only changes provided ones.
+     *
+     * Data can include: { user_id, vehicle_id }
+     *
+     * Returns { id, userId, vehicleId, locationTime }
+     *
+     * Throws NotFoundError if not found.
+     */
+    static async update(id, data) {
+        const { setCols, values } = sqlForPartialUpdate(data, {});
 
-    const idVarIdx = "$" + (values.length + 1);
+        const idVarIdx = "$" + (values.length + 1);
 
-    const querySql = `
+        const querySql = `
       UPDATE 
         locations 
       SET ${setCols}
       WHERE id = ${idVarIdx} 
       RETURNING
         id,
-        sitename
+        name,
+        region_id AS "regionId",
+        address,
+        city,
+        state,
+        zip_code AS "zipCode",
+        phone
         `;
 
-    const result = await db.query(querySql, [...values, id]);
+        const result = await db.query(querySql, [...values, id]);
 
-    const location = result.rows[0];
+        const location = result.rows[0];
 
-    if (!location) throw new NotFoundError(`No location with ID: ${id}`);
+        if (!location) throw new NotFoundError(`Backend Error: No location with ID: ${id}`);
 
-    return location;
-  }
+        return location;
+    }
 
-  /** DELETE given location by id from database; returns undefined.
-   *
-   * Throws NotFoundError if location not found.
-   *
-   * Don't really want to be able to do this would be more of a VOID feature, where we would remove the location but the location log should stay complete and if it should be voided should just have the data updated to reflect that it was VOID rather than remove from Database. Future report or data analysis may depend on sequential location numbers.
-   **/
-  static async remove(id) {
-    const result = await db.query(
-      `DELETE
+    /** DELETE given location by id from database; returns undefined.
+     *
+     * Throws NotFoundError if location not found.
+     *
+     * Don't really want to be able to do this would be more of a VOID feature, where we would remove the location but the location log should stay complete and if it should be voided should just have the data updated to reflect that it was VOID rather than remove from Database. Future report or data analysis may depend on sequential location numbers.
+     **/
+    static async remove(id) {
+        const result = await db.query(
+            `DELETE
       FROM 
           locations
       WHERE 
           id = $1
       RETURNING 
           id`,
-      [id]
-    );
-    const location = result.rows[0];
+            [id]
+        );
+        const location = result.rows[0];
 
-    if (!location) throw new NotFoundError(`No location with ID: ${id}`);
-  }
+        if (!location) throw new NotFoundError(`Backend Error: No location with ID: ${id}`);
+    }
 }
 module.exports = Location;

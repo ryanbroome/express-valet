@@ -84,7 +84,7 @@ router.get("/range", async function (req, res, next) {
             throw new BadRequestError("Missing required query parameters");
         }
 
-        const transactions = await Transaction.getAllDataByDateRange({ startYear, startMonth, startDay, endYear, endMonth, endDay });
+        const transactions = await Transaction.getAllRange({ startYear, startMonth, startDay, endYear, endMonth, endDay });
 
         return res.json({ transactions });
     } catch (err) {
@@ -105,7 +105,7 @@ router.get("/today", async function (req, res, next) {
             throw new BadRequestError("Missing required query parameters");
         }
 
-        const transactions = await Transaction.getTodayDataByLocation({ locationId });
+        const transactions = await Transaction.getTodayByLocation({ locationId });
 
         return res.json({ transactions });
     } catch (err) {

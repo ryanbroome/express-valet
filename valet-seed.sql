@@ -1,10 +1,10 @@
 -- 1. Seed roles
-INSERT INTO roles (role) VALUES
-    ('valet'),
-    ('supervisor'),
-    ('manager'),
-    ('director'),
-    ('admin');
+INSERT INTO roles (role, is_deleted) VALUES
+    ('valet', FALSE),
+    ('supervisor', FALSE),
+    ('manager', FALSE),
+    ('director', FALSE),
+    ('admin', FALSE);
 
 -- 2. Seed status
 INSERT INTO status (status) VALUES
@@ -26,13 +26,13 @@ INSERT INTO locations (name, region_id, address, city, state, zip_code, phone) V
     ('Dealership', 2, '456 South St', 'Miami', 'FL', '90002', '555-333-4321');
 
 -- 5. Seed podiums (3 per location)
-INSERT INTO podiums (name, location_id) VALUES
-    ('Main Entrance', 1),
-    ('Medical Arts Building', 1),
-    ('Emergency Department', 1),
-    ('Service', 2),
-    ('Sales', 2),
-    ('Parts', 2);
+INSERT INTO podiums (name, location_id, is_deleted) VALUES
+    ('Main Entrance', 1, FALSE),
+    ('Medical Arts Building', 1, FALSE),
+    ('Emergency Department', 1, FALSE),
+    ('Service', 2, FALSE),
+    ('Sales', 2, FALSE),
+    ('Parts', 2, FALSE);
 
 -- 6. Seed users
 INSERT INTO users (username, password, first_name, last_name, email, phone, total_parked, role_id, podium_id) VALUES
@@ -53,7 +53,11 @@ INSERT INTO users (username, password, first_name, last_name, email, phone, tota
 -- 7. Seed vehicles (example)
 INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
 VALUES
-    (1001, 1, '555-303-0303', 'Red', 'Volkswagen', '[{"x":222.71875,"y":143}]', 'stick shift');
+    (1001, 1, '555-303-0303', 'Red', 'Volkswagen', '[{"x":222.71875,"y":143}]', 'stick shift'),
+    (1002, 2, '555-404-0404', 'Blue', 'Toyota', '[{"x":222.71875,"y":143}]', 'automatic'),
+    (1003, 3, '555-505-0505', 'Green', 'Honda', '[{"x":222.71875,"y":143}]', 'manual'),
+    (1004, 4, '555-606-0606', 'Black', 'Ford', '[{"x":222.71875,"y":143}]', 'automatic'),
+    (1005, 5, '555-707-0707', 'White', 'Chevrolet', '[{"x":222.71875,"y":143}]', 'stick shift');
 
 -- 8. Seed transactions (example)
 INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id, status_id, transaction_time, updated_at)

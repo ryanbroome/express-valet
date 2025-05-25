@@ -15,28 +15,28 @@ const router = new express.Router();
 
 /** POST / CREATE { location } =>  { location }
  *
- * location should be {sitename} =>
+ * location should be {name, regionId, address, city, state, zipCode, phone} =>
  *
  * Returns { success : location.id }
  *
- *Authorization required: login?
+ *Authorization required: statusId >= 3
  */
 router.post("/", async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, locationNewSchema);
+    try {
+        const validator = jsonschema.validate(req.body, locationNewSchema);
 
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
+        if (!validator.valid) {
+            const errs = validator.errors.map((e) => e.stack);
+            throw new BadRequestError("Validation Schema errors", errs);
+        }
+
+        // ? name maybe in Location.create({sitename})
+        const location = await Location.create(req.body);
+
+        return res.status(201).json({ location });
+    } catch (err) {
+        return next(err);
     }
-
-    // ? sitename maybe in Location.create({sitename})
-    const location = await Location.create(req.body);
-
-    return res.status(201).json({ location });
-  } catch (err) {
-    return next(err);
-  }
 });
 
 /** GET /  ALL BY   =>
@@ -45,12 +45,12 @@ router.post("/", async function (req, res, next) {
  * TODO Authorization required: Admin
  */
 router.get("/", async function (req, res, next) {
-  try {
-    const locations = await Location.getAll();
-    return res.json({ locations });
-  } catch (err) {
-    return next(err);
-  }
+    try {
+        const locations = await Location.getAll();
+        return res.json({ locations });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 /** GET /   locationId  =>
@@ -61,12 +61,12 @@ router.get("/", async function (req, res, next) {
 /toggle ensureUserLocation
 */
 router.get("/id/:id", ensureLoggedIn, async function (req, res, next) {
-  try {
-    const location = await Location.getById(req.params.id);
-    return res.json({ location });
-  } catch (err) {
-    return next(err);
-  }
+    try {
+        const location = await Location.getById(req.params.id);
+        return res.json({ location });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 /** GET /  BY  sitename { sitename }  =>
@@ -74,12 +74,12 @@ router.get("/id/:id", ensureLoggedIn, async function (req, res, next) {
  *
  */
 router.get("/sitename/:sitename", async function (req, res, next) {
-  try {
-    const locations = await Location.getBySitename(req.params.sitename);
-    return res.json({ locations });
-  } catch (err) {
-    return next(err);
-  }
+    try {
+        const locations = await Location.getBySitename(req.params.sitename);
+        return res.json({ locations });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 /** PATCH  /:id  =>  { id, sitename }
@@ -89,12 +89,12 @@ router.get("/sitename/:sitename", async function (req, res, next) {
  * Authorization required: none
  */
 router.patch("/:id", async function (req, res, next) {
-  try {
-    const location = await Location.update(req.params.id, req.body);
-    return res.json({ location });
-  } catch (err) {
-    return next(err);
-  }
+    try {
+        const location = await Location.update(req.params.id, req.body);
+        return res.json({ location });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 /** DELETE  /:id  =>  { deleted: id }
@@ -102,12 +102,12 @@ router.patch("/:id", async function (req, res, next) {
  * Authorization: login
  */
 router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
-  try {
-    await Location.remove(req.params.id);
-    return res.json({ deleted: req.params.id });
-  } catch (err) {
-    return next(err);
-  }
+    try {
+        await Location.remove(req.params.id);
+        return res.json({ deleted: req.params.id });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 module.exports = router;

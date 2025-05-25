@@ -6,7 +6,7 @@
     "title": "Root Schema",
     "required": [
         "ticketNum",
-        "vehicleStatus",
+        "statusId",
         "mobile",
         "color",
         "make",
@@ -21,12 +21,12 @@
                 1001
             ]
         },
-        "vehicleStatus": {
-            "type": "string",
-            "default": "",
-            "title": "The vehicleStatus Schema",
+        "statusId": {
+            "type": "integer",
+            "default": 0,
+            "title": "The statusId Schema",
             "examples": [
-                "parked"
+                1
             ]
         },
         "mobile": {
@@ -60,14 +60,23 @@
             "examples": [
                 "hood, bumper, rims scratched"
             ]
+        },
+        "notes" :{
+            "type": "string",
+            "default": "",
+            "title": "The notes Schema",
+            "examples": [
+                "notes"
+            ]
         }
     },
     "examples": [{
         "ticketNum": 1001,
-        "vehicleStatus": "parked",
+        "statusId": 1,
         "mobile": "555-123-4567",
         "color": "blue",
         "make": "honda",
-        "damages": "hood, bumper, rims scratched"
+        "damages": "hood, bumper, rims scratched",
+        "notes": "notes"
     }]
 }

@@ -1,0 +1,74 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "properties": {
+        "transaction_id": {
+            "type": "integer",
+            "default": 0,
+            "title": "The transaction ID Schema",
+            "examples": [
+                123456
+            ]
+        },
+        "q1_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 1 response Schema",
+            "examples": [
+                1
+            ]
+        },
+        "q2_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 2 response Schema",
+            "examples": [
+                2
+            ]
+        },
+        "q3_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 3 response Schema",
+            "examples": [
+                3
+            ]
+        },
+        "q4_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 4 response Schema",
+            "examples": [
+                4
+            ]
+        },
+        "q5_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 5 response Schema",
+            "examples": [
+                2
+            ]
+        },
+        "q6_response": {
+            "type": "integer",
+            "default": 0,
+            "title": "The question 6 response Schema",
+            "examples": [
+                3
+            ]
+        }
+    },
+    "examples": [{
+        "transaction_id": 123456,
+        "q1_response": 1,
+        "q2_response": 2,
+        "q3_response": 3,
+        "q4_response": 4,
+        "q5_response": 2,
+        "q6_response": 3 
+    }]
+}

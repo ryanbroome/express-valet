@@ -5,7 +5,13 @@
     "default": {},
     "title": "Root Schema",
     "required": [
-        "sitename"
+        "name",
+        "region_id",
+        "address",
+        "city",
+        "state",
+        "zip_code",
+        "phone"
     ],
     "properties": {
         "id": {
@@ -16,17 +22,71 @@
                 1
             ]
         },
-        "sitename": {
+        "name": {
             "type": "string",
-            "default": "",
-            "title": "The sitename Schema",
+            "default": "Unknown",
+            "title": "The name Schema",
             "examples": [
                 "MCH-MAB"
+            ]
+        },
+        "region_id": {
+            "type": "integer",
+            "default": 1,
+            "title": "The region_id Schema",
+            "examples": [
+                1
+            ]
+        },
+        "address": {
+            "type": "string",
+            "default": "",
+            "title": "The address Schema",
+            "examples": [
+                "123 Main St"
+            ]
+        },
+        "city": {
+            "type": "string",
+            "default": "",
+            "title": "The city Schema",
+            "examples": [
+                "Tampa"
+            ]
+        },
+        "state": {
+            "type": "string",
+            "default": "",
+            "title": "The state Schema",
+            "examples": [
+                "FL"
+            ]
+        },
+        "zip_code": {
+            "type": "string",
+            "default": "",
+            "title": "The zip_code Schema",
+            "examples": [
+                "33601"
+            ]
+        },
+        "phone": {
+            "type": "string",
+            "default": "",
+            "title": "The phone Schema",
+            "examples": [
+                "(123) 456-7890"
             ]
         }
     },
     "examples": [{
         "id": 1,
-        "sitename": "MCH-MAB"
+        "name": "MCH-MAB",
+        "region_id": 1,
+        "address": "123 Main St",
+        "city": "Tampa",
+        "state": "FL",
+        "zip_code": "33601",
+        "phone": "(123) 456-7890"
     }]
 }

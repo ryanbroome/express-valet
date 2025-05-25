@@ -41,22 +41,35 @@ class User {
             // compare hashed password to a new hash from password
             const isValid = await bcrypt.compare(password, user.password);
             if (isValid === true) {
-                // console.log("BCRYPT PASWORD =>", password);
                 delete user.password;
                 return user;
             }
         }
 
-        throw new UnauthorizedError("Backend Unauthorized: Invalid username/password");
+        throw new UnauthorizedError("Backend UnauthorizedError: Invalid username/password");
     }
 
     /** Register user with data.
      *
-     * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
+     * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
      *
      * Throws BadRequestError on duplicates.
      **/
     static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, roleId, podiumId }) {
+        //Example: Assume VALET_ROLE_ID is 1 (adjust as needed)
+
+        const VALET_ROLE_ID = 1;
+
+        //If the user is a valet, require podiumId
+        if (roleId === VALET_ROLE_ID && !podiumId) {
+            throw new BadRequestError("Backend BadRequestError: podiumId is required for valet users");
+        }
+
+        //For non-valet roles, set podiumid to null if not provided
+        if (roleId !== VALET_ROLE_ID && !podiumId) {
+            podiumId = null;
+        }
+        // Check if the username already exists
         const duplicateCheck = await db.query(
             `SELECT username
              FROM users
@@ -69,8 +82,6 @@ class User {
         }
 
         const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-
-        console.log("HASHEDPW", "$=>>  ", hashedPassword, "  <<=$");
 
         const result = await db.query(
             `INSERT INTO 
@@ -89,9 +100,7 @@ class User {
             [username, hashedPassword, firstName, lastName, email, phone, totalParked, roleId, podiumId]
         );
 
-        const user = result.rows[0];
-
-        return user;
+        return result.rows[0];
     }
 
     /** Find all users.
@@ -150,6 +159,7 @@ class User {
         return user;
     }
 
+    /** Given a podiumId, return data about users */
     static async getByPodiumId(podiumId) {
         const userRes = await db.query(
             `SELECT
@@ -168,12 +178,12 @@ class User {
             podium_id = $1`,
             [podiumId]
         );
-        const user = userRes.rows[0];
-        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with podiumId: ${podiumId}`);
-        return user;
+        if (userRes.rows.length === 0) throw new NotFoundError(`Backend NotFoundError: No user(s) with podiumId: ${podiumId}`);
+
+        return userRes.rows;
     }
 
-    /** Given a roleId. return users with that roleId */
+    /** Given a roleId. return all users data with that roleId */
     static async getByRoleId(roleId) {
         const userRes = await db.query(
             `SELECT
@@ -192,14 +202,13 @@ class User {
             role_id = $1`,
             [roleId]
         );
-        const user = userRes.rows[0];
-        if (!user) throw new NotFoundError(`Backend NotFoundError: No user(s) with roleId: ${roleId}`);
-        return user;
+        if (userRes.rows.length === 0) throw new NotFoundError(`Backend NotFoundError: No user(s) with roleId: ${roleId}`);
+        return userRes.rows;
     }
 
     /** Given a username, return data about user.
      *
-     * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin, locationId }
+     * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
      *
      * Throws NotFoundError if user not found.
      **/
@@ -213,8 +222,8 @@ class User {
           email,
           phone, 
           total_parked AS "totalParked",
-          is_admin AS "isAdmin",
-          location_id AS "locationId"
+          role_id AS "roleId",
+          podium_id AS "podiumId"
       FROM 
           users
       WHERE 
@@ -224,7 +233,7 @@ class User {
 
         const user = userRes.rows[0];
 
-        if (!user) throw new NotFoundError(`No user with ID: ${id}`);
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with ID: ${id}`);
 
         return user;
     }
@@ -235,17 +244,23 @@ class User {
      * all the fields; this only changes provided ones.
      *
      * Data can include:
-     *   { firstName, lastName, password, email, phone, totalParked, isAdmin, password }
+     *   { firstName, lastName, password, email, phone, totalParked, roleId, podiumId }
      *
-     * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
+     * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
      *
      * Throws NotFoundError if not found.
      *
-     * WARNING: this function can set a new password or make a user an admin.
+     * WARNING: this function can set a new password or change the user's role_id.
      * Callers of this function must be certain they have validated inputs to this
      * or a serious security risks are opened.
      */
     static async update(username, data) {
+        // check to make sure data was provided to the update function
+        // if not, throw a BadRequestError
+        if (Object.keys(data).length === 0) {
+            throw new BadRequestError("Backend BadRequestError: No Data provided for update");
+        }
+
         if (data.password) {
             data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
         }
@@ -253,9 +268,9 @@ class User {
         const { setCols, values } = sqlForPartialUpdate(data, {
             firstName: "first_name",
             lastName: "last_name",
-            isAdmin: "is_admin",
             totalParked: "total_parked",
-            locationId: "location_id",
+            roleId: "role_id",
+            podiumId: "podium_id",
         });
 
         const usernameVarIdx = "$" + (values.length + 1);
@@ -273,18 +288,19 @@ class User {
             email,
             phone, 
             total_parked AS "totalParked",
-            is_admin AS "isAdmin",
-            location_id AS "locationId"`;
+            role_id AS "roleId",
+            podium_id AS "podiumId"`;
 
         const result = await db.query(querySql, [...values, username]);
         const user = result.rows[0];
 
-        if (!user) throw new NotFoundError(`No user with username: ${username}`);
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with username: ${username}`);
 
         delete user.password;
         return user;
     }
 
+    /** Increment the total_parked count for a user by 1. */
     static async incrementParked(username) {
         try {
             const query = `
@@ -301,15 +317,15 @@ class User {
         email,
         phone, 
         total_parked AS "totalParked",
-        is_admin AS "isAdmin",
-        location_id AS "locationId"
+        role_id AS "roleId",
+        podium_id AS "podiumId"
         `;
 
             const result = await db.query(query, [username]);
 
             const user = result.rows[0];
 
-            if (!user) throw new NotFoundError(`No user: ${username}`);
+            if (!user) throw new NotFoundError(`Backend NotFoundError: No user: ${username}`);
 
             return user;
         } catch (err) {
@@ -331,7 +347,7 @@ class User {
         );
         const user = result.rows[0];
 
-        if (!user) throw new NotFoundError(`No user: ${username}`);
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user: ${username}`);
     }
 
     /** Delete given user from database; returns undefined. */
@@ -348,7 +364,7 @@ class User {
         );
         const user = result.rows[0];
 
-        if (!user) throw new NotFoundError(`No user with ID: ${id}`);
+        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with ID: ${id}`);
     }
 }
 
