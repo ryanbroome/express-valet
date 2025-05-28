@@ -5,52 +5,52 @@
     "default": {},
     "title": "Root Schema",
     "properties": {
-        "user_id": {
+        "userId": {
             "type": "integer",
             "default": 0,
-            "title": "The user_id Schema",
+            "title": "The userId Schema",
             "examples": [
                 1
             ]
         },
-        "vehicle_id": {
+        "vehicleId": {
             "type": "integer",
             "default": 0,
-            "title": "The vehicle_id Schema",
+            "title": "The vehicleId Schema",
             "examples": [
                 1
             ]
         },
-        "podium_id": {
+        "podiumId": {
             "type": "integer",
             "default": 0,
-            "title": "The podium_id Schema",
+            "title": "The podiumId Schema",
             "examples": [
                 1
             ]
         },
-        "location_id": {
+        "locationId": {
             "type": "integer",
             "default": 0,
-            "title": "The location_id Schema",
+            "title": "The locationId Schema",
             "examples": [
                 1
             ]
         },
-        "status_id": {
+        "statusId": {
             "type": "integer",
             "default": 0,
-            "title": "The status_id Schema",
+            "title": "The statusId Schema",
             "examples": [
                 1
             ]
         }
     },
     "examples": [{
-        "user_id": 1,
-        "vehicle_id": 1,
-        "podium_id": 1,
-        "location_id": 1,
-        "status_id": 1
+        "userId": 1,
+        "vehicleId": 1,
+        "podiumId": 1,
+        "locationId": 1,
+        "statusId": 1
     }]
 }

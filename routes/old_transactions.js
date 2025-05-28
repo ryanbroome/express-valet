@@ -71,8 +71,76 @@ router.get("/id/:id/", async function (req, res, next) {
     }
 });
 
-//  * VW
-//  ! NMW
+/** GET /  ALL BY  range {startYear, startMonth, startDay, endYear, endMonth, endDay } startDate, endDate  =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ */
+router.get("/range", async function (req, res, next) {
+    try {
+        const { startYear, startMonth, startDay, endYear, endMonth, endDay } = req.query;
+
+        if (!startYear || !startMonth || !startDay || !endYear || !endMonth || !endDay) {
+            throw new BadRequestError("Missing required query parameters");
+        }
+
+        const transactions = await Transaction.getAllRange({ startYear, startMonth, startDay, endYear, endMonth, endDay });
+
+        return res.json({ transactions });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+/** GET /  ALL TODAY DATA BY LocationId { locationId } =>
+ *   { transactions: [ {...allTablesAllDataFromToday }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/today", async function (req, res, next) {
+    try {
+        const { locationId } = req.query;
+
+        if (!locationId) {
+            throw new BadRequestError("Missing required query parameters");
+        }
+
+        const transactions = await Transaction.getTodayByLocation({ locationId });
+
+        return res.json({ transactions });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+/** GET /:mobile  =>  { transaction }
+ *
+ *  transaction is { ...allColumnsAlDataTables }
+ *
+ * Authorization required: none
+ */
+router.get("/search/location/:locationId/mobile/:mobile", async function (req, res, next) {
+    try {
+        const transactions = await Transaction.getByMobile(req.params.locationId, req.params.mobile);
+        return res.json({ transactions });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+/** GET /  LOST KEYS  locationId, userId =>
+ *   { transactions: [ {...allTablesAllData }, ...] }
+ *
+ * TODO Authorization required: Admin
+ */
+router.get("/lostKeys/:locationId/:userId", async function (req, res, next) {
+    try {
+        const transactions = await Transaction.lostKeys(req.params.locationId, req.params.userId);
+        return res.json({ transactions });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 /** PATCH /[id] { data } => { transaction }
  *
  * Patches transaction data.
@@ -88,17 +156,16 @@ router.patch("/:id", async function (req, res, next) {
             const errs = validator.errors.map((e) => e.stack);
             throw new BadRequestError(errs);
         }
-        const transaction = await Transaction.update(req.params.id, req.body);
-        return res.json({ transaction });
+        const transactions = await Transaction.update(req.params.id, req.body);
+        return res.json({ transactions });
     } catch (err) {
         return next(err);
     }
 });
 
-// * VW
-// ! NMW
 /** DELETE /[id]  =>  { deleted: id }
  *
+ * Authorization: login
  */
 router.delete("/:id", async function (req, res, next) {
     try {

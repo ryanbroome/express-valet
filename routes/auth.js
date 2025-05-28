@@ -11,6 +11,8 @@ const { BadRequestError, ExpressError } = require("../expressError");
 
 const router = new express.Router();
 
+// *VW
+// ! NMW
 /** POST /auth/token:  { username, password } => { token }
  *
  * Returns JWT token which can be used to authenticate further requests.
@@ -47,6 +49,8 @@ router.post("/token", async function (req, res, next) {
     }
 });
 
+// *VW
+// ! NMW
 /** POST /auth/register:   { user } => { token }
  *
  * user must include { username, password, firstName, lastName, email, phone, roleId }
@@ -61,12 +65,15 @@ router.post("/register", async function (req, res, next) {
 
         if (!validator.valid) {
             throw new BadRequestError(
-                "Backend BadRequestError: Validation failed",
+                "Backend Error /register : Validation failed",
                 validator.errors.map((e) => e.stack)
             );
         }
+
         const newUser = await User.register({ ...req.body });
+
         const token = createToken(newUser);
+
         return res.status(201).json({ token });
     } catch (err) {
         if (err instanceof ExpressError) {

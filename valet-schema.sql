@@ -99,4 +99,19 @@ CREATE TABLE IF NOT EXISTS surveys (
     q5_response INTEGER NOT NULL,
     q6_response TEXT,
     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+-- Function to auto-update the Transactions.updated_at column
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at := NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to call the function before every UPDATE on transactions
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON transactions
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();

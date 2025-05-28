@@ -9,6 +9,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 /** Related functions for users. */
 class User {
+    // * VW
     /** authenticate user with username, password.
      *
      * Returns { username, first_name, last_name, email, phone, total_parked, role_id, podium_id }
@@ -49,6 +50,7 @@ class User {
         throw new UnauthorizedError("Backend UnauthorizedError: Invalid username/password");
     }
 
+    // *VW
     /** Register user with data.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
@@ -123,7 +125,7 @@ class User {
           users
            `
         );
-
+        if (result.rows.length === 0) throw new NotFoundError("Backend User.findAll: No users found");
         return result.rows;
     }
 

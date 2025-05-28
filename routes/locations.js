@@ -5,7 +5,8 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn, ensureAdmin, ensureUserLocation } = require("../middleware/auth");
+const { ensureLoggedIn } = require("../middleware/auth");
+
 const Location = require("../models/location");
 
 const locationNewSchema = require("../schemas/locationNew.json");
@@ -13,13 +14,21 @@ const locationUpdateSchema = require("../schemas/locationUpdate.json");
 
 const router = new express.Router();
 
-/** POST / CREATE { location } =>  { location }
+// To convert JavaScript variable names to SQL column names. This is used in the sqlForPartialUpdate function in models/location.js
+const jsToSql = {
+    regionId: "region_id",
+    zipCode: "zip_code",
+};
+
+// *VW
+// !NMW
+/**  POST / CREATE { location } =>  { location }
  *
  * location should be {name, regionId, address, city, state, zipCode, phone} =>
  *
  * Returns { success : location.id }
  *
- *Authorization required: statusId >= 3
+ *?Authorization required: roleId >= ?
  */
 router.post("/", async function (req, res, next) {
     try {
@@ -27,10 +36,9 @@ router.post("/", async function (req, res, next) {
 
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Validation Schema errors", errs);
+            throw new BadRequestError("Backend Route Error: BASE_URL / locations => Validation Schema errors", errs);
         }
 
-        // ? name maybe in Location.create({sitename})
         const location = await Location.create(req.body);
 
         return res.status(201).json({ location });
@@ -39,10 +47,12 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-/** GET /  ALL BY   =>
- *   { locations: [ {id, sitename }, ...] }
+// * VW
+// !NMW
+/** GET /  ALL    =>
+ *   { locations: [ {id, name, regionId, address, city, state, zipCode, phone }, ...] }
  *
- * TODO Authorization required: Admin
+ * TODO Authorization required: roleId >= ?
  */
 router.get("/", async function (req, res, next) {
     try {
@@ -53,14 +63,16 @@ router.get("/", async function (req, res, next) {
     }
 });
 
+// * VW
+// !NMW
 /** GET /   locationId  =>
  *   { locations: [ {id, sitename }, ...] }
  *
  * Authorization required: login
  * removed ensureLoggedIn
-/toggle ensureUserLocation
-*/
-router.get("/id/:id", ensureLoggedIn, async function (req, res, next) {
+ * toggle ensureUserLocation
+ */
+router.get("/id/:id", async function (req, res, next) {
     try {
         const location = await Location.getById(req.params.id);
         return res.json({ location });
@@ -69,27 +81,39 @@ router.get("/id/:id", ensureLoggedIn, async function (req, res, next) {
     }
 });
 
-/** GET /  BY  sitename { sitename }  =>
- *   { transactions: [ {...allTablesAllData }, ...] }
+// *VW
+// !NMW => user.locationId === location.id?
+/** GET /  BY  name { name }  =>
+ *   { locations: [ {location }, ...] }
  *
  */
-router.get("/sitename/:sitename", async function (req, res, next) {
+router.get("/name/:name", async function (req, res, next) {
     try {
-        const locations = await Location.getBySitename(req.params.sitename);
+        const locations = await Location.getByName(req.params.name);
         return res.json({ locations });
     } catch (err) {
         return next(err);
     }
 });
 
-/** PATCH  /:id  =>  { id, sitename }
+// *VW
+// !NMW  Authorization required: user.roleId >=?
+/** PATCH  /:id  =>  { id, name, regionId, address, city, state, zipCode, phone }
  *
- *  location is { id, sitename }
+ *  location is { id, name, regionId, address, city, state, zipCode, phone }
  *
- * Authorization required: none
  */
 router.patch("/:id", async function (req, res, next) {
     try {
+        const validator = jsonschema.validate(req.body, locationUpdateSchema);
+        if (!validator.valid) {
+            const errs = validator.errors.map((e) => e.stack);
+            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / locations /:id=> Validation errors", errs);
+        }
+        // Check if the request body contains any valid fields to update
+        if (Object.keys(req.body).length === 0) {
+            throw new BadRequestError("Backend Error: No data provided to update");
+        }
         const location = await Location.update(req.params.id, req.body);
         return res.json({ location });
     } catch (err) {
@@ -97,11 +121,13 @@ router.patch("/:id", async function (req, res, next) {
     }
 });
 
+// * VW
+// ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }
  *
  * Authorization: login
  */
-router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
     try {
         await Location.remove(req.params.id);
         return res.json({ deleted: req.params.id });

@@ -7,6 +7,12 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for locations. */
 
 class Location {
+    static jsToSql = {
+        regionId: "region_id",
+        zipCode: "zip_code",
+    };
+
+    // * VW
     /** POST / Create a location  update db, return new location data.
      *
      * data should be { user_id, vehicle_id, location_id }
@@ -27,7 +33,7 @@ class Location {
             [name]
         );
 
-        if (duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate location Alert : ${name} already exists`);
+        if (duplicateCheck.rows[0]) throw new BadRequestError(`Backend Error Location.create Duplicate location Alert : ${name} already exists`);
 
         const result = await db.query(
             `INSERT INTO locations 
@@ -44,6 +50,7 @@ class Location {
         return { success: location.id };
     }
 
+    // * VW
     /** GET all locations from database
      *
      * Returns {id, name, regionId, address, city, state, zipCode, phone }
@@ -72,6 +79,7 @@ class Location {
         return locations;
     }
 
+    // * VW
     /** GET  location from database for a given id
      *
      * Returns { id, name, regionId, address, city, state, zipCode, phone }
@@ -97,12 +105,12 @@ class Location {
 
         const result = await db.query(query, [id]);
 
-        const location = result.rows;
+        const location = result.rows[0];
 
-        if (!location) throw new NotFoundError(`Backend Error: No locations available with ID : ${id}`);
+        if (!location) throw new NotFoundError(`Backend Error Location.getById: No locations available with ID : ${id}`);
         return location;
     }
-
+    // * VW
     /** GET  locations from database for a given name
      *    works with partial name anywhere in the name
      * Returns { id, name, regionId, address, city, state, zipCode, phone }
@@ -128,12 +136,13 @@ WHERE
 
         const result = await db.query(query, [`%${name}%`]);
 
-        const locations = result.rows;
+        const locations = result.rows[0];
 
         if (!locations) throw new NotFoundError(`Backend Error: No locations available including name :  ${name}`);
         return locations;
     }
 
+    // *VW
     /** PATCH / Update  location data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -146,7 +155,7 @@ WHERE
      * Throws NotFoundError if not found.
      */
     static async update(id, data) {
-        const { setCols, values } = sqlForPartialUpdate(data, {});
+        const { setCols, values } = sqlForPartialUpdate(data, Location.jsToSql);
 
         const idVarIdx = "$" + (values.length + 1);
 
@@ -170,11 +179,11 @@ WHERE
 
         const location = result.rows[0];
 
-        if (!location) throw new NotFoundError(`Backend Error: No location with ID: ${id}`);
+        if (!location) throw new NotFoundError(`Backend Error Location.update : No location with ID: ${id}`);
 
         return location;
     }
-
+    // * VW
     /** DELETE given location by id from database; returns undefined.
      *
      * Throws NotFoundError if location not found.
