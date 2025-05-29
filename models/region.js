@@ -7,6 +7,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for regions. */
 
 class Region {
+    // * VW
     /** CREATE a new region.
      *
      * data should be { name }
@@ -18,7 +19,7 @@ class Region {
         const duplicateCheck = await db.query(`SELECT id FROM regions WHERE name = $1`, [name]);
 
         if (duplicateCheck.rows[0]) {
-            throw new BadRequestError(`Backend Error: Duplicate region: ${name}`);
+            throw new BadRequestError(`Backend Error Region.create: Duplicate region: ${name}`);
         }
 
         try {
@@ -31,14 +32,14 @@ class Region {
 
             const region = result.rows[0];
 
-            if (!region) throw new NotFoundError(`Backend Error: Region could not be created`);
+            if (!region) throw new NotFoundError(`Backend Error Region.create: Region could not be created`);
 
             return region;
         } catch (err) {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-
+    // * VW
     /** GET all regions.
      *
      * Returns [{ id, name }, ...]
@@ -49,11 +50,11 @@ class Region {
 
         const regions = result.rows;
 
-        if (!regions.length) throw new NotFoundError(`Backend Error: No regions found in database`);
+        if (!regions.length) throw new NotFoundError(`Backend Error Region.getAll: No regions found in database`);
 
         return regions;
     }
-
+    // * VW
     /** GET region by id.
      *
      * Returns { id, name }
@@ -64,11 +65,26 @@ class Region {
 
         const region = result.rows[0];
 
-        if (!region) throw new NotFoundError(`Backend Error: No region found with ID: ${id}`);
+        if (!region) throw new NotFoundError(`Backend Error Region.getById: No region found with ID: ${id}`);
 
         return region;
     }
+    // * VW
+    /** GET regions by name.
+     *
+     * Returns [{ id, name }, ...]
+     * Throws NotFoundError if no regions found with that name.
+     */
+    static async getByName(name) {
+        const result = await db.query(`SELECT id, name FROM regions WHERE name ILIKE $1`, [`%${name}%`]);
 
+        const regions = result.rows;
+
+        if (!regions.length) throw new NotFoundError(`Backend Error Region.getByName: No regions found with name: ${name}`);
+
+        return regions;
+    }
+    // * VW
     /** UPDATE region data with `data`.
      *
      * Data can include: { name }
@@ -89,19 +105,16 @@ class Region {
 
         const region = result.rows[0];
 
-        if (!region) throw new NotFoundError(`Backend Error: No region to update with ID: ${id}`);
+        if (!region) throw new NotFoundError(`Backend Error Region.update: No region to update with ID: ${id}`);
 
         return region;
     }
-
-    /** DELETE region from database.
-     *
-     * Throws NotFoundError if region not found.
-     */
+    // * VW
+    /** SOFT DELETE region from database. */
     static async remove(id) {
-        const result = await db.query(`DELETE FROM regions WHERE id = $1 RETURNING id`, [id]);
+        const result = await db.query(`UPDATE regions SET is_deleted = TRUE WHERE id = $1 RETURNING id, name, is_deleted AS "isDeleted"`, [id]);
         const region = result.rows[0];
-        if (!region) throw new NotFoundError(`Backend Error: No region to delete with ID: ${id}`);
+        if (!region) throw new NotFoundError(`Backend Error Region.remove: No region to delete with ID: ${id}`);
     }
 }
 

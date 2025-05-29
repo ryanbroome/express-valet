@@ -47,7 +47,7 @@ class Location {
 
         const location = result.rows[0];
 
-        return { success: location.id };
+        return location;
     }
 
     // * VW

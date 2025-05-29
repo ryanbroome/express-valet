@@ -12,7 +12,7 @@ class Podium {
         locationId: "location_id",
         isDeleted: "is_deleted",
     };
-
+    // * VW
     /** POST / Create a podium  update db, return new podium data.
      *
      * data should be {  name, locationId }
@@ -33,7 +33,7 @@ class Podium {
             const result = await db.query(
                 `INSERT INTO podiums (name, location_id)
                  VALUES ($1, $2)
-                 RETURNING id`,
+                 RETURNING id, name, location_id AS "locationId", is_deleted AS "isDeleted"`,
                 [name, locationId]
             );
 
@@ -41,12 +41,12 @@ class Podium {
 
             if (!podium) throw new NotFoundError(`Backend Error Podium.create: Podium could not be created at location ID: ${locationId}`);
 
-            return { success: podium.id };
+            return podium;
         } catch (err) {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-
+    // * VW
     /** GET all active podiums from database
      *
      * Returns {id, name, locationId }
@@ -71,7 +71,7 @@ class Podium {
 
         return podiums;
     }
-
+    // * VW
     /** GET  podium from database for a given id
      *
      * Returns { id, name, locationId }
@@ -83,22 +83,21 @@ class Podium {
         SELECT 
             id,
             name,
-            location_id AS "locationId"
+            location_id AS "locationId",
+            is_deleted AS "isDeleted"
         FROM
             podiums p
         WHERE
-            p.id = $1 AND p.is_deleted = FALSE
+            p.id = $1
         `;
 
         const result = await db.query(query, [id]);
-
         const podium = result.rows[0];
-
         if (!podium) throw new NotFoundError(`Backend Error Podium.getById: No podiums available with ID : ${id}`);
+
         return podium;
     }
-
-    // ? Fix duplicate name issue
+    // * VW
     /** GET  podium from database for a given name
      *    works with partial name anywhere in the name
      * Returns { id, name, locationId }
@@ -110,11 +109,12 @@ class Podium {
         SELECT
             id,
             name,
-            location_id AS "locationId"
+            location_id AS "locationId",
+            is_deleted AS "isDeleted"
         FROM
             podiums p
         WHERE
-            p.name ILIKE $1 AND p.is_deleted = FALSE
+            p.name ILIKE $1
         `;
 
         const result = await db.query(query, [`%${name}%`]);
@@ -125,7 +125,7 @@ class Podium {
 
         return podiums;
     }
-
+    // * VW
     /** PATCH / Update  podium data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -140,7 +140,7 @@ class Podium {
     static async update(id, data) {
         const { setCols, values } = sqlForPartialUpdate(data, Podium.jsToSql);
         if (values.length === 0) {
-            throw new BadRequestError("Backend Error: No data provided to update");
+            throw new BadRequestError("Backend Error Podium.update: No data provided to update");
         }
 
         const idVarIdx = "$" + (values.length + 1);
@@ -149,11 +149,12 @@ class Podium {
         UPDATE 
             podiums 
         SET ${setCols}
-        WHERE id = ${idVarIdx} AND is_deleted = FALSE
+        WHERE id = ${idVarIdx}
         RETURNING
             id,
             name,
-            location_id AS "locationId"
+            location_id AS "locationId",
+            is_deleted AS "isDeleted"
         `;
 
         const result = await db.query(querySql, [...values, id]);
@@ -164,7 +165,7 @@ class Podium {
 
         return podium;
     }
-
+    // * VW
     /** SOFT DELETE: sets is_deleted = TRUE */
     static async remove(id) {
         const result = await db.query(`UPDATE podiums SET is_deleted = TRUE WHERE id = $1 RETURNING id`, [id]);

@@ -7,6 +7,18 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for surveys. */
 
 class Survey {
+    // To convert JavaScript variable names to SQL column names. This is used in the sqlForPartialUpdate function in models/survey.js
+    static jsToSql = {
+        transactionId: "transaction_id",
+        q1Response: "q1_response",
+        q2Response: "q2_response",
+        q3Response: "q3_response",
+        q4Response: "q4_response",
+        q5Response: "q5_response",
+        q6Response: "q6_response",
+        submittedAt: "submitted_at",
+    };
+
     /** CREATE a new survey.
      * data should be: { transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response }
      * Returns { id, transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at }
@@ -70,15 +82,12 @@ class Survey {
      */
     static async update(id, data) {
         // Map camelCase keys to snake_case columns
-        const { setCols, values } = sqlForPartialUpdate(data, {
-            transactionId: "transaction_id",
-            q1Response: "q1_response",
-            q2Response: "q2_response",
-            q3Response: "q3_response",
-            q4Response: "q4_response",
-            q5Response: "q5_response",
-            q6Response: "q6_response",
-        });
+        const { setCols, values } = sqlForPartialUpdate(data, Survey.jsToSql);
+
+        if (values.length === 0) {
+            throw new BadRequestError("Backend Error: No data provided to update");
+        }
+
         const idVarIdx = "$" + (values.length + 1);
 
         const querySql = `
@@ -101,7 +110,7 @@ class Survey {
 
         const survey = result.rows[0];
 
-        if (!survey) throw new NotFoundError(`Backend Error: No survey to update with ID: ${id}`);
+        if (!survey) throw new NotFoundError(`Backend Error Survey.update: No survey to update with ID: ${id}`);
 
         return survey;
     }

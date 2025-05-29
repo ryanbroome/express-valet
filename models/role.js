@@ -7,6 +7,10 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for roles. */
 
 class Role {
+    // To convert JavaScript variable names to SQL column names. This is used in the sqlForPartialUpdate function in models/role.js
+    static jsToSql = {
+        isDeleted: "is_deleted",
+    };
     /** CREATE a new role.
      * ? If not working try removing the object from argument . example Role.create(role) vs Role.create({ role })
      * data should be { role }
@@ -22,11 +26,11 @@ class Role {
         }
 
         try {
-            const result = await db.query(`INSERT INTO roles (role) VALUES ($1) RETURNING id, role`, [role]);
+            const result = await db.query(`INSERT INTO roles (role) VALUES ($1) RETURNING id, role, is_deleted AS "isDeleted"`, [role]);
 
             const newRole = result.rows[0];
 
-            if (!newRole) throw new NotFoundError(`Backend Error: Role could not be created`);
+            if (!newRole) throw new NotFoundError(`Backend Error Role.create: Role could not be created`);
 
             return newRole;
         } catch (err) {
@@ -65,7 +69,7 @@ class Role {
      * Throws NotFoundError if not found.
      */
     static async update(id, data) {
-        const { setCols, values } = sqlForPartialUpdate(data, {});
+        const { setCols, values } = sqlForPartialUpdate(data, Role.jsToSql);
         const idVarIdx = "$" + (values.length + 1);
 
         const querySql = `
@@ -78,7 +82,7 @@ class Role {
         const result = await db.query(querySql, [...values, id]);
         const updatedRole = result.rows[0];
 
-        if (!updatedRole) throw new NotFoundError(`Backend Error: No role to update with ID: ${id}`);
+        if (!updatedRole) throw new NotFoundError(`Backend Error Role.update: No role to update with ID: ${id}`);
         return updatedRole;
     }
 
@@ -88,7 +92,7 @@ class Role {
 
         const deletedRole = result.rows[0];
 
-        if (!deletedRole) throw new NotFoundError(`Backend Error: No role to delete with ID: ${id}`);
+        if (!deletedRole) throw new NotFoundError(`Backend Error Role.remove: No role to delete with ID: ${id}`);
 
         return { deleted: `Role deleted with ID: ${id}` };
     }

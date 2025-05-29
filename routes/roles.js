@@ -14,7 +14,6 @@ const locationUpdateSchema = require("../schemas/locationUpdate.json");
 
 const router = new express.Router();
 
-// *VW
 // !NMW
 /**  POST / CREATE { location } =>  { location }
  *
@@ -41,7 +40,6 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-// * VW
 // !NMW
 /** GET /  ALL    =>
  *   { locations: [ {id, name, regionId, address, city, state, zipCode, phone }, ...] }
@@ -57,7 +55,6 @@ router.get("/", async function (req, res, next) {
     }
 });
 
-// * VW
 // !NMW
 /** GET /   locationId  =>
  *   { locations: [ {id, sitename }, ...] }
@@ -75,7 +72,6 @@ router.get("/id/:id", async function (req, res, next) {
     }
 });
 
-// *VW
 // !NMW => user.locationId === location.id?
 /** GET /  BY  name { name }  =>
  *   { locations: [ {location }, ...] }
@@ -90,14 +86,13 @@ router.get("/name/:name", async function (req, res, next) {
     }
 });
 
-// *VW
 // !NMW  Authorization required: user.roleId >=?
-/** PATCH  /:id  =>  { id, name, regionId, address, city, state, zipCode, phone }
+/** PATCH  /:id  =>  { }
  *
  *  location is { id, name, regionId, address, city, state, zipCode, phone }
  *
  */
-router.patch("/:id", async function (req, res, next) {
+router.patch("/id/:id", async function (req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, locationUpdateSchema);
         if (!validator.valid) {
@@ -115,7 +110,6 @@ router.patch("/:id", async function (req, res, next) {
     }
 });
 
-// * VW
 // ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }
  *

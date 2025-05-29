@@ -4,9 +4,7 @@
 
 const express = require("express");
 const cors = require("cors");
-// // *
 const path = require("path");
-// // *
 
 const { NotFoundError } = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
@@ -17,6 +15,10 @@ const vehiclesRoutes = require("./routes/vehicles");
 const transactionRoutes = require("./routes/transactions");
 const locationRoutes = require("./routes/locations");
 const podiumRoutes = require("./routes/podiums");
+const regionRoutes = require("./routes/regions");
+const rolesRoutes = require("./routes/roles");
+const statusesRoutes = require("./routes/statuses");
+const surveysRoutes = require("./routes/surveys");
 const morgan = require("morgan");
 const app = express();
 
@@ -38,6 +40,10 @@ app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/locations", locationRoutes);
 app.use("/podiums", podiumRoutes);
+app.use("/regions", regionRoutes);
+app.use("/roles", rolesRoutes);
+app.use("/statuses", statusesRoutes);
+app.use("/surveys", surveysRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

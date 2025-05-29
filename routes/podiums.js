@@ -9,11 +9,11 @@ const { ensureLoggedIn } = require("../middleware/auth");
 
 const Podium = require("../models/podium");
 
-const podiumNewSchema = require("../schemas/locationNew.json");
-const podiumUpdateSchema = require("../schemas/locationUpdate.json");
+const podiumNewSchema = require("../schemas/podiumNew.json");
+const podiumUpdateSchema = require("../schemas/podiumUpdate.json");
 
 const router = new express.Router();
-
+// * VW
 // !NMW
 /**  POST / CREATE { podium } =>  { podium }
  *
@@ -38,7 +38,7 @@ router.post("/", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW user.roleId >= ?
 /** GET /  ALL    =>
  *   { podiums: [ {id, name, locationId, isDeleted }, ...] }
@@ -52,14 +52,10 @@ router.get("/", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW
-/** GET /   locationId  =>
- *   { locations: [ {id, sitename }, ...] }
- *
- * Authorization required: login
- * removed ensureLoggedIn
- * toggle ensureUserLocation
+/** GET /   podium  =>
+ *   { podiums: [ {id, name, locationId, isDeleted }, ...] }
  */
 router.get("/id/:id", async function (req, res, next) {
     try {
@@ -69,7 +65,7 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-
+//  * VW
 // !NMW => user.podiumId === podium.id?
 /** GET /  BY  name { name }  =>
  *   { podiums: [ {podium }, ...] }
@@ -83,7 +79,7 @@ router.get("/name/:name", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { id, name, locationId, isDeleted }
  *
@@ -95,11 +91,11 @@ router.patch("/id/:id", async function (req, res, next) {
         const validator = jsonschema.validate(req.body, podiumUpdateSchema);
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / podiums /:id=> Validation errors", errs);
+            throw new BadRequestError("Backend Route PATCH => BASE_URL / podiums /id/:id=> Validation errors", errs);
         }
         // Check if the request body contains any valid fields to update
         if (Object.keys(req.body).length === 0) {
-            throw new BadRequestError("Backend Error: No data provided to update");
+            throw new BadRequestError("Backend Error Podium.update: No data provided to update");
         }
         const podium = await Podium.update(req.params.id, req.body);
         return res.json({ podium });
@@ -107,7 +103,7 @@ router.patch("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }
  *

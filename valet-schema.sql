@@ -7,7 +7,8 @@
 -- 1. Create independent tables first
 CREATE TABLE IF NOT EXISTS regions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL
+    name VARCHAR(100) UNIQUE NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS roles (
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS locations (
     state TEXT NOT NULL,
     zip_code TEXT NOT NULL,
     phone TEXT NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (region_id) REFERENCES regions(id) ON DELETE CASCADE
 );
 
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS users (
     total_parked INTEGER NOT NULL DEFAULT 0,
     role_id INTEGER NOT NULL,
     podium_id INTEGER,
+    is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT,
     FOREIGN KEY (podium_id) REFERENCES podiums(id) ON DELETE CASCADE
 );
