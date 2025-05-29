@@ -7,57 +7,56 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 
-const Location = require("../models/location");
+const Role = require("../models/role");
 
-const locationNewSchema = require("../schemas/locationNew.json");
-const locationUpdateSchema = require("../schemas/locationUpdate.json");
+const roleNewSchema = require("../schemas/roleNew.json");
+const roleUpdateSchema = require("../schemas/roleUpdate.json");
 
 const router = new express.Router();
 
 // !NMW
-/**  POST / CREATE { location } =>  { location }
+/**  POST / CREATE { role } =>  { role }
  *
- * location should be {name, regionId, address, city, state, zipCode, phone} =>
+ * role should be {name} =>
  *
- * Returns { success : location.id }
+ * Returns { role: { id, role, isDeleted } }
  *
  *?Authorization required: roleId >= ?
  */
 router.post("/", async function (req, res, next) {
     try {
-        const validator = jsonschema.validate(req.body, locationNewSchema);
+        const validator = jsonschema.validate(req.body, roleNewSchema);
 
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: BASE_URL / locations => Validation Schema errors", errs);
+            throw new BadRequestError("Backend Route Error: BASE_URL / roles => Validation Schema errors", errs);
         }
 
-        const location = await Location.create(req.body);
+        const role = await Role.create(req.body);
 
-        return res.status(201).json({ location });
+        return res.status(201).json({ role });
     } catch (err) {
         return next(err);
     }
 });
 
-// !NMW
+// !NMW roleId >= ?
 /** GET /  ALL    =>
- *   { locations: [ {id, name, regionId, address, city, state, zipCode, phone }, ...] }
+ *   { roles: [ {id, role, isDeleted }, ...] }
  *
- * TODO Authorization required: roleId >= ?
  */
 router.get("/", async function (req, res, next) {
     try {
-        const locations = await Location.getAll();
-        return res.json({ locations });
+        const roles = await Role.getAll();
+        return res.json({ roles });
     } catch (err) {
         return next(err);
     }
 });
 
 // !NMW
-/** GET /   locationId  =>
- *   { locations: [ {id, sitename }, ...] }
+/** GET /   roleId  =>
+ *   { roles: [ {id, role }, ...] }
  *
  * Authorization required: login
  * removed ensureLoggedIn
@@ -65,8 +64,8 @@ router.get("/", async function (req, res, next) {
  */
 router.get("/id/:id", async function (req, res, next) {
     try {
-        const location = await Location.getById(req.params.id);
-        return res.json({ location });
+        const role = await Role.getById(req.params.id);
+        return res.json({ role });
     } catch (err) {
         return next(err);
     }
@@ -74,13 +73,13 @@ router.get("/id/:id", async function (req, res, next) {
 
 // !NMW => user.locationId === location.id?
 /** GET /  BY  name { name }  =>
- *   { locations: [ {location }, ...] }
+ *   { roles: [ {role }, ...] }
  *
  */
 router.get("/name/:name", async function (req, res, next) {
     try {
-        const locations = await Location.getByName(req.params.name);
-        return res.json({ locations });
+        const roles = await Role.getByName(req.params.name);
+        return res.json({ roles });
     } catch (err) {
         return next(err);
     }
@@ -89,35 +88,32 @@ router.get("/name/:name", async function (req, res, next) {
 // !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { }
  *
- *  location is { id, name, regionId, address, city, state, zipCode, phone }
+ *  role is { id, name, isDeleted }
  *
  */
 router.patch("/id/:id", async function (req, res, next) {
     try {
-        const validator = jsonschema.validate(req.body, locationUpdateSchema);
+        const validator = jsonschema.validate(req.body, roleUpdateSchema);
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / locations /:id=> Validation errors", errs);
+            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / roles /:id=> Validation errors", errs);
         }
         // Check if the request body contains any valid fields to update
         if (Object.keys(req.body).length === 0) {
             throw new BadRequestError("Backend Error: No data provided to update");
         }
-        const location = await Location.update(req.params.id, req.body);
-        return res.json({ location });
+        const role = await Role.update(req.params.id, req.body);
+        return res.json({ role });
     } catch (err) {
         return next(err);
     }
 });
 
 // ! NMW => user.roleId >= ?
-/** DELETE  /:id  =>  { deleted: id }
- *
- * Authorization: login
- */
-router.delete("/:id", async function (req, res, next) {
+/** DELETE  /:id  =>  { deleted: id }*/
+router.delete("/id/:id", async function (req, res, next) {
     try {
-        await Location.remove(req.params.id);
+        await Role.remove(req.params.id);
         return res.json({ deleted: req.params.id });
     } catch (err) {
         return next(err);
