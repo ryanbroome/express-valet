@@ -16,7 +16,7 @@ const usersRoutes = require("./routes/users");
 const vehiclesRoutes = require("./routes/vehicles");
 const transactionRoutes = require("./routes/transactions");
 const locationRoutes = require("./routes/locations");
-
+const podiumRoutes = require("./routes/podiums");
 const morgan = require("morgan");
 const app = express();
 
@@ -37,6 +37,7 @@ app.use("/users", usersRoutes);
 app.use("/vehicles", vehiclesRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/locations", locationRoutes);
+app.use("/podiums", podiumRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

@@ -13,6 +13,8 @@ const vehicleUpdateSchema = require("../schemas/vehicleUpdate.json");
 
 const router = new express.Router();
 
+// * VW
+//  ! NMW
 /** POST / { vehicle } =>  { vehicle }
  *
  * vehicle should be { ticketNum, vehicleStatus, mobile, color, make, damages, notes }
@@ -21,35 +23,31 @@ const router = new express.Router();
  *
  * Authorization required: login
  */
-// *todo middleware protect routes
-router.post(
-    "/",
-    // ensureLoggedIn, ensureAdmin,
-    async function (req, res, next) {
-        try {
-            const validator = jsonschema.validate(req.body, vehicleNewSchema);
+router.post("/", async function (req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, vehicleNewSchema);
 
-            if (!validator.valid) {
-                const errs = validator.errors.map((e) => e.stack);
-                throw new BadRequestError(errs);
-            }
-
-            const vehicle = await Vehicle.create(req.body);
-
-            return res.status(201).json({ vehicle });
-        } catch (err) {
-            return next(err);
+        if (!validator.valid) {
+            const errs = validator.errors.map((e) => e.stack);
+            throw new BadRequestError(errs);
         }
-    }
-);
 
+        const vehicle = await Vehicle.create(req.body);
+
+        return res.status(201).json({ vehicle });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+// * VW
+// ! NMW
 /** GET / =>  { vehicles }
  *
  * Returns { [ { vehicle0 } , { vehicle1 } , { vehicle2 } , ... ] }
  *
- * Authorization required: login
  */
-router.get("/", ensureLoggedIn, async function (req, res, next) {
+router.get("/", async function (req, res, next) {
     try {
         const vehicles = await Vehicle.findAll();
         return res.json({ vehicles });
@@ -58,55 +56,58 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
     }
 });
 
+// * VW
+// ! NMW
 /** GET / =>  { vehicles }
  *
  * Returns {  vehicle  }
  *
  * Authorization required: login
  */
-router.get(
-    "/:id",
-    //  ensureLoggedIn,
-    async function (req, res, next) {
-        try {
-            const vehicle = await Vehicle.getById(req.params.id);
-            return res.json({ vehicle });
-        } catch (err) {
-            return next(err);
-        }
-    }
-);
-
-/** GET /:mobile  =>  { vehicle }
- *
- *  vehicle is { ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }
- *
- * Authorization required: none
- */
-router.get("/mobile/:mobile", async function (req, res, next) {
+router.get("/id/:id", async function (req, res, next) {
     try {
-        const vehicle = await Vehicle.getByStatusMobile(req.params.statusId, req.params.mobile);
+        const vehicle = await Vehicle.getById(req.params.id);
         return res.json({ vehicle });
     } catch (err) {
         return next(err);
     }
 });
 
+//  * VW
+// ! NMW
+/** GET /:mobile  =>  { vehicle }
+ *
+ *  vehicle is { ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }
+ *
+ */
+router.get("/mobile/:mobile", async function (req, res, next) {
+    try {
+        const vehicle = await Vehicle.getByMobile(req.params.mobile);
+        return res.json({ vehicle });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+//  * VW
+// ! NMW
 /** GET /:vehicleStatus  =>  { vehicles }
  *
  *  vehiclea are [{ ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }, ...]
  *
  * Authorization required: none
  */
-router.get("/status/:status", async function (req, res, next) {
+router.get("/status/:statusId", async function (req, res, next) {
     try {
-        const vehicle = await Vehicle.getByStatus(req.params.status);
+        const vehicle = await Vehicle.getByStatusId(req.params.statusId);
         return res.json({ vehicle });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
+// ! NMW
 /** PATCH / :id  => { vehicle }
  *
  * Patches vehicle data.
@@ -117,74 +118,37 @@ router.get("/status/:status", async function (req, res, next) {
  *
  * Authorization required: login
  */
-router.patch(
-    "/:id",
-    // ensureLoggedIn, ensureAdmin,
-    async function (req, res, next) {
-        try {
-            const validator = jsonschema.validate(req.body, vehicleUpdateSchema);
+router.patch("/id/:id", async function (req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, vehicleUpdateSchema);
 
-            if (!validator.valid) {
-                const errs = validator.errors.map((e) => e.stack);
+        if (!validator.valid) {
+            const errs = validator.errors.map((e) => e.stack);
 
-                throw new BadRequestError(errs);
-            }
-
-            const vehicle = await Vehicle.update(req.params.id, req.body);
-            return res.json({ vehicle });
-        } catch (err) {
-            return next(err);
+            throw new BadRequestError(errs);
         }
+
+        const vehicle = await Vehicle.update(req.params.id, req.body);
+        return res.json({ vehicle });
+    } catch (err) {
+        return next(err);
     }
-);
+});
 
-/** PATCH / checkout/:id  => { vehicle }
- *
- * Patches vehicle data to update status and check_out time.
- *
- *
- * Returns { vehicle }
- *
- * Authorization required: login
- */
-router.patch(
-    "/checkout/:id",
-    // ensureLoggedIn, ensureAdmin,
-    async function (req, res, next) {
-        try {
-            const validator = jsonschema.validate(req.body, vehicleUpdateSchema);
-
-            if (!validator.valid) {
-                const errs = validator.errors.map((e) => e.stack);
-
-                throw new BadRequestError(errs);
-            }
-
-            const vehicle = await Vehicle.updateVehicleStatus(req.params.id, req.params.statusId);
-
-            return res.json({ vehicle });
-        } catch (err) {
-            return next(err);
-        }
-    }
-);
-
-/** DELETE / :id  =>  { deleted: msg }
+// * VW
+// ! NMW
+/** DELETE /id/:id  =>  { deleted: msg }
  *
  * Authorization: login
  */
-router.delete(
-    "/:id",
-    //  ensureLoggedIn, ensureAdmin,
-    async function (req, res, next) {
-        try {
-            await Vehicle.remove(req.params.id);
+router.delete("/id/:id", async function (req, res, next) {
+    try {
+        await Vehicle.remove(req.params.id);
 
-            return res.json({ deleted: `Vehicle deleted with ID : ${req.params.id}` });
-        } catch (err) {
-            return next(err);
-        }
+        return res.json({ deleted: `Vehicle deleted with ID : ${req.params.id}` });
+    } catch (err) {
+        return next(err);
     }
-);
+});
 
 module.exports = router;

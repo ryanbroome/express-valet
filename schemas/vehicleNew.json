@@ -76,7 +76,7 @@
         "mobile": "555-123-4567",
         "color": "blue",
         "make": "honda",
-        "damages": "hood, bumper, rims scratched",
+        "damages": "[{\"x\":222.71875,\"y\":143}]",
         "notes": "notes"
     }]
 }

@@ -5,16 +5,16 @@
     "default": {},
     "title": "Root Schema",
     "required": [
-        "transaction_id",
-        "q1_response",
-        "q2_response",
-        "q3_response",
-        "q4_response",
-        "q5_response",
-        "q6_response"
+        "transactionId",
+        "q1Response",
+        "q2Response",
+        "q3Response",
+        "q4Response",
+        "q5Response",
+        "q6Response"
     ],
     "properties": {
-        "transaction_id": {
+        "transactionId": {
             "type": "integer",
             "default": 0,
             "title": "The transaction ID Schema",
@@ -22,7 +22,7 @@
                 123456
             ]
         },
-        "q1_response": {
+        "q1Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 1 response Schema",
@@ -30,7 +30,7 @@
                 1
             ]
         },
-        "q2_response": {
+        "q2Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 2 response Schema",
@@ -38,7 +38,7 @@
                 2
             ]
         },
-        "q3_response": {
+        "q3Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 3 response Schema",
@@ -46,7 +46,7 @@
                 3
             ]
         },
-        "q4_response": {
+        "q4Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 4 response Schema",
@@ -54,7 +54,7 @@
                 4
             ]
         },
-        "q5_response": {
+        "q5Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 5 response Schema",
@@ -62,7 +62,7 @@
                 2
             ]
         },
-        "q6_response": {
+        "q6Response": {
             "type": "integer",
             "default": 0,
             "title": "The question 6 response Schema",
@@ -72,12 +72,12 @@
         }
     },
     "examples": [{
-        "transaction_id": 123456,
-        "q1_response": 1,
-        "q2_response": 2,
-        "q3_response": 3,
-        "q4_response": 4,
-        "q5_response": 2,
-        "q6_response": 3 
+        "transactionId": 123456,
+        "q1Response": 1,
+        "q2Response": 2,
+        "q3Response": 3,
+        "q4Response": 4,
+        "q5Response": 2,
+        "q6Response": 3 
     }]
 }

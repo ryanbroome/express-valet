@@ -7,6 +7,12 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for podiums. */
 
 class Podium {
+    // To convert JavaScript variable names to SQL column names. This is used in the sqlForPartialUpdate function in models/podium.js
+    static jsToSql = {
+        locationId: "location_id",
+        isDeleted: "is_deleted",
+    };
+
     /** POST / Create a podium  update db, return new podium data.
      *
      * data should be {  name, locationId }
@@ -33,7 +39,7 @@ class Podium {
 
             const podium = result.rows[0];
 
-            if (!podium) throw new NotFoundError(`Backend Error: Podium could not be created at location ID: ${locationId}`);
+            if (!podium) throw new NotFoundError(`Backend Error Podium.create: Podium could not be created at location ID: ${locationId}`);
 
             return { success: podium.id };
         } catch (err) {
@@ -41,7 +47,7 @@ class Podium {
         }
     }
 
-    /** GET all podiums from database
+    /** GET all active podiums from database
      *
      * Returns {id, name, locationId }
      *
@@ -61,7 +67,7 @@ class Podium {
         const result = await db.query(query);
 
         const podiums = result.rows;
-        if (!podiums.length) throw new NotFoundError(`Backend Error: No podiums found in database`);
+        if (!podiums.length) throw new NotFoundError(`Backend Error Podium.getAll: No podiums found in database`);
 
         return podiums;
     }
@@ -88,7 +94,7 @@ class Podium {
 
         const podium = result.rows[0];
 
-        if (!podium) throw new NotFoundError(`Backend Error: No podiums available with ID : ${id}`);
+        if (!podium) throw new NotFoundError(`Backend Error Podium.getById: No podiums available with ID : ${id}`);
         return podium;
     }
 
@@ -115,7 +121,7 @@ class Podium {
 
         const podiums = result.rows;
 
-        if (!podiums.length) throw new NotFoundError(`Backend Error: No podium including name :  ${name}`);
+        if (!podiums.length) throw new NotFoundError(`Backend Error Podium.getByName: No podium including name :  ${name}`);
 
         return podiums;
     }
@@ -132,7 +138,10 @@ class Podium {
      * Throws NotFoundError if not found.
      */
     static async update(id, data) {
-        const { setCols, values } = sqlForPartialUpdate(data, {});
+        const { setCols, values } = sqlForPartialUpdate(data, Podium.jsToSql);
+        if (values.length === 0) {
+            throw new BadRequestError("Backend Error: No data provided to update");
+        }
 
         const idVarIdx = "$" + (values.length + 1);
 
@@ -151,7 +160,7 @@ class Podium {
 
         const podium = result.rows[0];
 
-        if (!podium) throw new NotFoundError(`Backend Error: No podium to update with ID: ${id}`);
+        if (!podium) throw new NotFoundError(`Backend Error Podium.update: No podium to update with ID: ${id}`);
 
         return podium;
     }
@@ -160,7 +169,7 @@ class Podium {
     static async remove(id) {
         const result = await db.query(`UPDATE podiums SET is_deleted = TRUE WHERE id = $1 RETURNING id`, [id]);
         const podium = result.rows[0];
-        if (!podium) throw new NotFoundError(`Backend Error: No podium to delete with ID: ${id}`);
+        if (!podium) throw new NotFoundError(`Backend Error Podium.remove: No podium to delete with ID: ${id}`);
     }
 }
 

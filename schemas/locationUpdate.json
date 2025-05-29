@@ -21,10 +21,10 @@
                 "MCH-MAB"
             ]
         },
-        "region_id": {
+        "regionId": {
             "type": "integer",
             "default": 1,
-            "title": "The region_id Schema",
+            "title": "The regionId Schema",
             "examples": [
                 1
             ]
@@ -53,10 +53,10 @@
                 "FL"
             ]
         },
-        "zip_code": {
+        "zipCode": {
             "type": "string",
             "default": "",
-            "title": "The zip_code Schema",
+            "title": "The zipCode Schema",
             "examples": [
                 "33601"
             ]
@@ -73,11 +73,11 @@
     "examples": [{
         "id": 1,
         "name": "MCH-MAB",
-        "region_id": 1,
+        "regionId": 1,
         "address": "123 Main St",
         "city": "Tampa",
         "state": "FL",
-        "zip_code": "33601",
+        "zipCode": "33601",
         "phone": "(123) 456-7890"
     }]
 }

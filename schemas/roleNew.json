@@ -16,7 +16,7 @@
                 "MCH-MAB"
             ]
         },
-        "is_deleted": {
+        "isDeleted": {
             "type": "boolean",
             "default": false,
             "title": "Is Deleted",
@@ -28,6 +28,6 @@
     },
     "examples": [{
         "role": "MCH-MAB",
-        "is_deleted": false
+        "isDeleted": false
     }]
 }

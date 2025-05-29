@@ -53,13 +53,14 @@ router.post("/", async function (req, res, next) {
  **/
 router.get("/", async function (req, res, next) {
     try {
-        const users = await User.findAll();
+        const users = await User.getAll();
         return res.json({ users });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
 // ! NMW ensure user.username = req.params.username, or roleId >= ?
 /** GET /username/:username => { user }
  *
@@ -68,13 +69,14 @@ router.get("/", async function (req, res, next) {
  **/
 router.get("/username/:username", async function (req, res, next) {
     try {
-        const user = await User.get(req.params.username);
+        const user = await User.getByUsername(req.params.username);
         return res.json({ user });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
 // ! NMW ensure user.id = req.params.id, or roleId >= ?
 /** GET /id/ :id => { user }
  *
@@ -89,7 +91,7 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 //  ! NMW Logged in user or roleId >= ?
 /** PATCH / :username { user } => { user }
  *
@@ -116,7 +118,7 @@ router.patch("/:username", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 //  ! NMW Logged in user or roleId >= ?
 /** PATCH / /parkOne/:username { user } => { user }
  *
@@ -133,7 +135,7 @@ router.patch("/parkOne/:username", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 //  ! NMW current user or roleId >= ?
 /** DELETE /:username  =>  { deleted: username }
  *
@@ -147,7 +149,7 @@ router.delete("/:username", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 //  ! NMW current user or roleId >= ?
 /** DELETE /:id  =>  { deleted: ID }
  *

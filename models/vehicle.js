@@ -8,7 +8,12 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Vehicle {
     // Vehicle class is used to interact with the vehicles table in the database
+    static jsToSql = {
+        ticketNum: "ticket_num",
+        statusId: "status_id",
+    };
 
+    //  * VW
     /** POST Create a vehicle (from data), update db, return new vehicle data.
      *
      * data should be { ticketNum, statusId, mobile, color, make, damages, notes }
@@ -49,7 +54,7 @@ class Vehicle {
 
         return vehicle;
     }
-
+    // * VW
     /** GET all vehicles.
      *
      * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
@@ -71,7 +76,7 @@ class Vehicle {
         `
             );
             if (vehiclesRes.rows.length === 0) {
-                throw new NotFoundError("Backend Error: No vehicles found");
+                throw new NotFoundError("Backend Error Vehicle.findAll : No vehicles found");
             }
             return vehiclesRes.rows;
         } catch (err) {
@@ -79,7 +84,7 @@ class Vehicle {
             throw err;
         }
     }
-
+    // * VW
     /** GET vehicle by ID.
      *
      * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
@@ -107,9 +112,9 @@ class Vehicle {
         if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with ID : ${id}`);
         return vehicle;
     }
-
+    // * VW
     /** GET Find vehicles by status**/
-    static async getByStatus(status) {
+    static async getByStatusId(statusId) {
         const vehicleRes = await db.query(
             `SELECT 
           id,
@@ -125,16 +130,16 @@ class Vehicle {
       WHERE 
           status_id = $1
     `,
-            [status]
+            [statusId]
         );
 
         const vehicles = vehicleRes.rows;
 
-        if (!vehicles.length) throw new NotFoundError(`Backend Error: No vehicles with status : ${status}`);
+        if (!vehicles.length) throw new NotFoundError(`Backend Error Vehicle.getByStatusId: No vehicles with status : ${statusId}`);
 
         return vehicles;
     }
-
+    // * VW
     /** GET Given a vehicle partial mobile and statusId return data about vehicle.
      *
      * Returns {}
@@ -168,7 +173,7 @@ ILIKE
 
         return vehicle;
     }
-
+    // * VW
     /** PATCH Update vehicle data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -181,10 +186,7 @@ ILIKE
      * Throws NotFoundError if not found.
      */
     static async update(id, data) {
-        const { setCols, values } = sqlForPartialUpdate(data, {
-            ticketNum: "ticket_num",
-            statusId: "status_id",
-        });
+        const { setCols, values } = sqlForPartialUpdate(data, Vehicle.jsToSql);
 
         const handleVarIdx = "$" + (values.length + 1);
         // checkout should be current timestamp, need to figure out how to make checkout a currentTimestamp
@@ -210,6 +212,7 @@ ILIKE
         return vehicle;
     }
 
+    // * VW
     /** DELETE given vehicle from database; returns undefined.
      *
      * Throws NotFoundError if vehicle not found.
@@ -228,7 +231,7 @@ ILIKE
 
         const vehicle = result.rows[0];
 
-        if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with id: ${id}`);
+        if (!vehicle) throw new NotFoundError(`Backend Error Vehicle.remove: No vehicle with id: ${id}`);
     }
 }
 

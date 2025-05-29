@@ -6,8 +6,8 @@
     "title": "Root Schema",
     "required": [
         "name",
-         "location_id",
-         "is_deleted"
+         "locationId",
+         "isDeleted"
     ],
     "properties": {
         "id": {
@@ -26,10 +26,10 @@
                 "MCH-MAB"
             ]
         },
-        "location_id": {
+        "locationId": {
             "type": "integer",
             "default": 1,
-            "title": "The location_id Schema",
+            "title": "The locationId Schema",
             "examples": [
                 1
             ]
@@ -38,6 +38,6 @@
     "examples": [{
         "id": 1,
         "name": "MCH-MAB",
-        "location_id": 1
+        "locationId": 1
     }]
 }

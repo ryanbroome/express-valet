@@ -104,12 +104,12 @@ class User {
 
         return result.rows[0];
     }
-
+    // * VW
     /** Find all users.
      *
      * Returns [{ username, first_name, last_name, email, phone, totalParked, roleId, podiumId }, ...]
      **/
-    static async findAll() {
+    static async getAll() {
         const result = await db.query(
             `SELECT
           id, 
@@ -125,17 +125,18 @@ class User {
           users
            `
         );
-        if (result.rows.length === 0) throw new NotFoundError("Backend User.findAll: No users found");
+        if (result.rows.length === 0) throw new NotFoundError("Backend User.getAll error : No users found");
         return result.rows;
     }
 
+    // * VW
     /** Given a username, return data about user.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
      *
      * Throws NotFoundError if user not found.
      **/
-    static async get(username) {
+    static async getByUsername(username) {
         const userRes = await db.query(
             `SELECT 
           id,
@@ -156,7 +157,7 @@ class User {
 
         const user = userRes.rows[0];
 
-        if (!user) throw new NotFoundError(`Backend NotFoundError: No user with username: ${username}`);
+        if (!user) throw new NotFoundError(`Backend User.get error: No user with username: ${username}`);
 
         return user;
     }
@@ -207,7 +208,7 @@ class User {
         if (userRes.rows.length === 0) throw new NotFoundError(`Backend NotFoundError: No user(s) with roleId: ${roleId}`);
         return userRes.rows;
     }
-
+    // * VW
     /** Given a username, return data about user.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
@@ -239,7 +240,7 @@ class User {
 
         return user;
     }
-
+    // * VW
     /** Update user data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain
@@ -301,7 +302,7 @@ class User {
         delete user.password;
         return user;
     }
-
+    // * VW
     /** Increment the total_parked count for a user by 1. */
     static async incrementParked(username) {
         try {
@@ -327,14 +328,14 @@ class User {
 
             const user = result.rows[0];
 
-            if (!user) throw new NotFoundError(`Backend NotFoundError: No user: ${username}`);
+            if (!user) throw new NotFoundError(`Backend NotFoundError User.incrementParked: No user: ${username}`);
 
             return user;
         } catch (err) {
             console.error(err);
         }
     }
-
+    // * VW
     /** Delete given user from database; returns undefined. */
     static async remove(username) {
         let result = await db.query(
@@ -351,7 +352,7 @@ class User {
 
         if (!user) throw new NotFoundError(`Backend NotFoundError: No user: ${username}`);
     }
-
+    // * VW
     /** Delete given user from database; returns undefined. */
     static async removeById(id) {
         let result = await db.query(
