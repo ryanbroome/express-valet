@@ -11,6 +11,7 @@ class Role {
     static jsToSql = {
         isDeleted: "is_deleted",
     };
+
     /** CREATE a new role.
      * ? If not working try removing the object from argument . example Role.create(role) vs Role.create({ role })
      * data should be { role }
