@@ -5,7 +5,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn } = require("../middleware/auth");
+//// const { ensureLoggedIn } = require("../middleware/auth");
 
 const Role = require("../models/role");
 
@@ -14,14 +14,11 @@ const roleUpdateSchema = require("../schemas/roleUpdate.json");
 
 const router = new express.Router();
 
+// * VW
 // !NMW
 /**  POST / CREATE { role } =>  { role }
- *
  * role should be {name} =>
- *
  * Returns { role: { id, role, isDeleted } }
- *
- *?Authorization required: roleId >= ?
  */
 router.post("/", async function (req, res, next) {
     try {
@@ -39,7 +36,7 @@ router.post("/", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW roleId >= ?
 /** GET /  ALL    =>
  *   { roles: [ {id, role, isDeleted }, ...] }
@@ -53,7 +50,7 @@ router.get("/", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW
 /** GET /   roleId  =>
  *   { roles: [ {id, role }, ...] }
@@ -70,21 +67,21 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW => user.locationId === location.id?
 /** GET /  BY  name { name }  =>
  *   { roles: [ {role }, ...] }
  *
  */
-router.get("/name/:name", async function (req, res, next) {
+router.get("/role/:role", async function (req, res, next) {
     try {
-        const roles = await Role.getByName(req.params.name);
+        const roles = await Role.getByRole(req.params.role);
         return res.json({ roles });
     } catch (err) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { }
  *
@@ -108,7 +105,7 @@ router.patch("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-
+// * VW
 // ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }*/
 router.delete("/id/:id", async function (req, res, next) {
