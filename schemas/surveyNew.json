@@ -63,11 +63,11 @@
             ]
         },
         "q6Response": {
-            "type": "integer",
+            "type": "string",
             "default": 0,
             "title": "The question 6 response Schema",
             "examples": [
-                3
+                "Excellent"
             ]
         }
     },

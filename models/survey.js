@@ -19,18 +19,19 @@ class Survey {
         submittedAt: "submitted_at",
     };
 
+    // * VW
     /** CREATE a new survey.
-     * data should be: { transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response }
-     * Returns { id, transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at }
+     * data should be: { transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response }
+     * Returns { id, transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response, submittedAt }
      */
-    static async create({ transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response }) {
+    static async create({ transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response }) {
         const result = await db.query(
             `INSERT INTO surveys
                 (transaction_id, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response)
              VALUES
                 ($1, $2, $3, $4, $5, $6, $7)
-             RETURNING id, transaction_id AS "transactionId", q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at`,
-            [transactionId, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response]
+             RETURNING id, transaction_id AS "transactionId", q1_response AS "q1Response", q2_response AS "q2Response", q3_response AS "q3Response", q4_response AS "q4Response", q5_response AS "q5Response", q6_response AS "q6Response", submitted_at AS "submittedAt"`,
+            [transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response]
         );
         const survey = result.rows[0];
 
@@ -38,7 +39,7 @@ class Survey {
 
         return survey;
     }
-
+    // * VW
     /** GET all surveys.
      * Returns [{...}, ...]
      * Throws NotFoundError if no surveys found.
@@ -55,7 +56,7 @@ class Survey {
 
         return surveys;
     }
-
+    // * VW
     /** GET survey by id.
      * Returns {...}
      * Throws NotFoundError if not found.
@@ -73,7 +74,25 @@ class Survey {
 
         return survey;
     }
+    // * VW
+    /** GET survey by transactionId.
+     * Returns {...}
+     * Throws NotFoundError if not found.
+     */
+    static async getByTransactionId(transactionId) {
+        const result = await db.query(
+            `SELECT id, transaction_id AS "transactionId", q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at AS "submittedAt"
+             FROM surveys
+             WHERE transaction_id = $1`,
+            [transactionId]
+        );
+        const survey = result.rows[0];
 
+        if (!survey) throw new NotFoundError(`Backend Error: No survey found with Transaction ID: ${transactionId}`);
+
+        return survey;
+    }
+    // * VW
     /**
      * UPDATE survey data with `data`.
      * Data can include: { q1_response, q2_response, q3_response, q4_response, q5_response, q6_response }
@@ -114,7 +133,7 @@ class Survey {
 
         return survey;
     }
-
+    // * VW
     /** DELETE survey from database.
      * Throws NotFoundError if survey not found.
      */
