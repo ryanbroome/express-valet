@@ -7,6 +7,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for status. */
 
 class Status {
+    // *VW
     /** CREATE a new status.
      * data should be { status }
      * Returns { id, status }
@@ -37,21 +38,21 @@ class Status {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-
-    /** GET all statuses.
+    // * VW
+    /** GET all status.
      * Returns [{ id, status }, ...]
-     * Throws NotFoundError if no statuses found.
+     * Throws NotFoundError if no status found.
      */
     static async getAll() {
         const result = await db.query(`SELECT id, status FROM status ORDER BY id`);
 
-        const statuses = result.rows;
+        const status = result.rows;
 
-        if (!statuses.length) throw new NotFoundError(`Backend Error: No statuses found in database`);
+        if (!status.length) throw new NotFoundError(`Backend Error: No status found in database`);
 
-        return statuses;
+        return status;
     }
-
+    // * VW
     /** GET status by id.
      * Returns { id, status }
      * Throws NotFoundError if not found.
@@ -65,7 +66,21 @@ class Status {
 
         return status;
     }
+    // * VW
+    /** GET status by status value.
+     * Returns { id, status }
+     * Throws NotFoundError if not found.
+     */
+    static async getByStatus(status) {
+        const result = await db.query(`SELECT id, status FROM status WHERE status = $1`, [status]);
 
+        const foundStatus = result.rows[0];
+
+        if (!foundStatus) throw new NotFoundError(`Backend Error: No status found with status: ${status}`);
+
+        return foundStatus;
+    }
+    // * VW
     /** UPDATE status data with `data`.
      * Data can include: { status }
      * Returns { id, status }
@@ -85,11 +100,11 @@ class Status {
 
         const updatedStatus = result.rows[0];
 
-        if (!updatedStatus) throw new NotFoundError(`Backend Error: No status to update with ID: ${id}`);
+        if (!updatedStatus) throw new NotFoundError(`Backend Error Status.update: No status to update with ID: ${id}`);
 
         return updatedStatus;
     }
-
+    // * VW
     /** DELETE status from database.
      * Throws NotFoundError if status not found.
      */
@@ -98,7 +113,7 @@ class Status {
 
         const deletedStatus = result.rows[0];
 
-        if (!deletedStatus) throw new NotFoundError(`Backend Error: No status to delete with ID: ${id}`);
+        if (!deletedStatus) throw new NotFoundError(`Backend Error Status.remove: No status to delete with ID: ${id}`);
 
         return { deleted: `Status deleted with ID: ${id}` };
     }

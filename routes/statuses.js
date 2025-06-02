@@ -7,109 +7,107 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 
-const Location = require("../models/location");
+const Status = require("../models/status");
 
-const locationNewSchema = require("../schemas/locationNew.json");
-const locationUpdateSchema = require("../schemas/locationUpdate.json");
+const statusNewSchema = require("../schemas/statusNew.json");
+const statusUpdateSchema = require("../schemas/statusUpdate.json");
 
 const router = new express.Router();
 
+// * VW
 // !NMW
-/**  POST / CREATE { location } =>  { location }
+/**  POST / CREATE { status } =>  { status }
  *
- * location should be {name, regionId, address, city, state, zipCode, phone} =>
+ * status should be { status } =>
  *
- * Returns { success : location.id }
- *
- *?Authorization required: roleId >= ?
+ * Returns { success : status.id }
  */
 router.post("/", async function (req, res, next) {
     try {
-        const validator = jsonschema.validate(req.body, locationNewSchema);
+        const validator = jsonschema.validate(req.body, statusNewSchema);
 
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: BASE_URL / locations => Validation Schema errors", errs);
+            throw new BadRequestError("Backend Route Error: POST / status => Validation Schema errors", errs);
         }
 
-        const location = await Location.create(req.body);
+        const status = await Status.create(req.body);
 
-        return res.status(201).json({ location });
+        return res.status(201).json({ status });
     } catch (err) {
         return next(err);
     }
 });
-
-// !NMW
+// * VW
+// !NMW required: roleId >= ?
 /** GET /  ALL    =>
- *   { locations: [ {id, name, regionId, address, city, state, zipCode, phone }, ...] }
- *
- * TODO Authorization required: roleId >= ?
+ *   { status: [ {id, status }, ...] }
  */
 router.get("/", async function (req, res, next) {
     try {
-        const locations = await Location.getAll();
-        return res.json({ locations });
+        const status = await Status.getAll();
+        return res.json({ status });
     } catch (err) {
         return next(err);
     }
 });
-
+// * VW
 // !NMW
-/** GET /   locationId  =>
- *   { locations: [ {id, sitename }, ...] }
+/** GET /   statusId  =>
+ *   { status: {id, status }, ...}
  *
- * Authorization required: login
- * removed ensureLoggedIn
- * toggle ensureUserLocation
+ * Authorization: login
  */
 router.get("/id/:id", async function (req, res, next) {
     try {
-        const location = await Location.getById(req.params.id);
-        return res.json({ location });
+        const status = await Status.getById(req.params.id);
+        return res.json({ status });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
 // !NMW => user.locationId === location.id?
 /** GET /  BY  name { name }  =>
- *   { locations: [ {location }, ...] }
+ *   { status: [ {status }, ...] }
  *
  */
-router.get("/name/:name", async function (req, res, next) {
+router.get("/status/:status", async function (req, res, next) {
     try {
-        const locations = await Location.getByName(req.params.name);
-        return res.json({ locations });
+        const status = await Status.getByStatus(req.params.status);
+        return res.json({ status });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
 // !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { id, name, regionId, address, city, state, zipCode, phone }
  *
- *  location is { id, name, regionId, address, city, state, zipCode, phone }
+ *  status is { id, status }
  *
  */
-router.patch("/:id", async function (req, res, next) {
+router.patch("/id/:id", async function (req, res, next) {
     try {
-        const validator = jsonschema.validate(req.body, locationUpdateSchema);
+        const validator = jsonschema.validate(req.body, statusUpdateSchema);
         if (!validator.valid) {
             const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / locations /:id=> Validation errors", errs);
+            throw new BadRequestError("Backend Route Error: PATCH => BASE_URL / status /:id=> Validation errors", errs);
         }
         // Check if the request body contains any valid fields to update
         if (Object.keys(req.body).length === 0) {
             throw new BadRequestError("Backend Error: No data provided to update");
         }
-        const location = await Location.update(req.params.id, req.body);
-        return res.json({ location });
+        const status = await Status.update(req.params.id, req.body);
+        return res.json({ status });
     } catch (err) {
         return next(err);
     }
 });
 
+// * VW
 // ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }
  *
@@ -117,7 +115,7 @@ router.patch("/:id", async function (req, res, next) {
  */
 router.delete("/:id", async function (req, res, next) {
     try {
-        await Location.remove(req.params.id);
+        await Status.remove(req.params.id);
         return res.json({ deleted: req.params.id });
     } catch (err) {
         return next(err);

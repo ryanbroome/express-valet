@@ -97,7 +97,7 @@ router.get("/name/:name", async function (req, res, next) {
  *  location is { id, name, regionId, address, city, state, zipCode, phone }
  *
  */
-router.patch("/:id", async function (req, res, next) {
+router.patch("/id/:id", async function (req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, locationUpdateSchema);
         if (!validator.valid) {
@@ -121,10 +121,10 @@ router.patch("/:id", async function (req, res, next) {
  *
  * Authorization: login
  */
-router.delete("/:id", async function (req, res, next) {
+router.delete("/id/:id", async function (req, res, next) {
     try {
         await Location.remove(req.params.id);
-        return res.json({ deleted: req.params.id });
+        return res.json({ deleted: `Location soft deleted with ID : ${req.params.id}` });
     } catch (err) {
         return next(err);
     }

@@ -17,7 +17,7 @@ const locationRoutes = require("./routes/locations");
 const podiumRoutes = require("./routes/podiums");
 const regionRoutes = require("./routes/regions");
 const rolesRoutes = require("./routes/roles");
-const statusesRoutes = require("./routes/statuses");
+const statusRoutes = require("./routes/statuses");
 const surveysRoutes = require("./routes/surveys");
 const morgan = require("morgan");
 const app = express();
@@ -42,7 +42,7 @@ app.use("/locations", locationRoutes);
 app.use("/podiums", podiumRoutes);
 app.use("/regions", regionRoutes);
 app.use("/roles", rolesRoutes);
-app.use("/statuses", statusesRoutes);
+app.use("/status", statusRoutes);
 app.use("/surveys", surveysRoutes);
 
 app.use((err, req, res, next) => {

@@ -184,25 +184,19 @@ WHERE
         return location;
     }
     // * VW
-    /** DELETE given location by id from database; returns undefined.
+    /** SOFT DELETE given location by id from database; returns undefined.
      *
      * Throws NotFoundError if location not found.
-     *
-     * Don't really want to be able to do this would be more of a VOID feature, where we would remove the location but the location log should stay complete and if it should be voided should just have the data updated to reflect that it was VOID rather than remove from Database. Future report or data analysis may depend on sequential location numbers.
-     **/
+     */
     static async remove(id) {
         const result = await db.query(
-            `DELETE
-      FROM 
-          locations
-      WHERE 
-          id = $1
-      RETURNING 
-          id`,
+            `UPDATE locations
+             SET is_deleted = TRUE
+             WHERE id = $1
+             RETURNING id`,
             [id]
         );
         const location = result.rows[0];
-
         if (!location) throw new NotFoundError(`Backend Error: No location with ID: ${id}`);
     }
 }
