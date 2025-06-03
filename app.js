@@ -19,6 +19,7 @@ const regionRoutes = require("./routes/regions");
 const rolesRoutes = require("./routes/roles");
 const statusRoutes = require("./routes/statuses");
 const surveysRoutes = require("./routes/surveys");
+const dataRoutes = require("./routes/data");
 const morgan = require("morgan");
 const app = express();
 
@@ -44,6 +45,7 @@ app.use("/regions", regionRoutes);
 app.use("/roles", rolesRoutes);
 app.use("/status", statusRoutes);
 app.use("/surveys", surveysRoutes);
+app.use("/data", dataRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
