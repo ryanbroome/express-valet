@@ -9,37 +9,35 @@ const { ensureLoggedIn } = require("../middleware/auth");
 
 const Data = require("../models/data");
 
-// const locationNewSchema = require("../schemas/locationNew.json");
-// const locationUpdateSchema = require("../schemas/locationUpdate.json");
+// // const locationNewSchema = require("../schemas/locationNew.json");
 
 const router = new express.Router();
 
 // *VW
 // !NMW
-/**  POST / CREATE { location } =>  { location }
+/**   POST / CREATE { location } =>  { location }
  *
  * location should be {name, regionId, address, city, state, zipCode, phone} =>
  *
  * Returns { success : location.id }
  *
- *?Authorization required: roleId >= ?
  */
-router.post("/", async function (req, res, next) {
-    try {
-        const validator = jsonschema.validate(req.body, locationNewSchema);
+// router.post("/", async function (req, res, next) {
+//     try {
+//         const validator = jsonschema.validate(req.body, locationNewSchema);
 
-        if (!validator.valid) {
-            const errs = validator.errors.map((e) => e.stack);
-            throw new BadRequestError("Backend Route Error: BASE_URL / locations => Validation Schema errors", errs);
-        }
+//         if (!validator.valid) {
+//             const errs = validator.errors.map((e) => e.stack);
+//             throw new BadRequestError("Backend Route Error: BASE_URL / locations => Validation Schema errors", errs);
+//         }
 
-        const location = await Location.create(req.body);
+//         const location = await Location.create(req.body);
 
-        return res.status(201).json({ location });
-    } catch (err) {
-        return next(err);
-    }
-});
+//         return res.status(201).json({ location });
+//     } catch (err) {
+//         return next(err);
+//     }
+// });
 
 // * VW
 // !NMW

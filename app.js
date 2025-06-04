@@ -19,7 +19,7 @@ const regionRoutes = require("./routes/regions");
 const rolesRoutes = require("./routes/roles");
 const statusRoutes = require("./routes/statuses");
 const surveysRoutes = require("./routes/surveys");
-const dataRoutes = require("./routes/data");
+const dataRoutes = require("./routes/datas");
 const morgan = require("morgan");
 const app = express();
 
