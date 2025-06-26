@@ -57,7 +57,7 @@ class User {
      *
      * Throws BadRequestError on duplicates.
      **/
-    static async register({ username, password, firstName, lastName, email, phone, totalParked = 0, roleId, podiumId }) {
+    static async register({ username, password, firstName, lastName, email, phone, roleId, podiumId, totalParked = 0 }) {
         //Example: Assume VALET_ROLE_ID is 1 (adjust as needed)
 
         const VALET_ROLE_ID = 1;
