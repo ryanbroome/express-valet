@@ -23,4 +23,19 @@ router.get("/garageData/:podiumId", async function (req, res, next) {
     }
 });
 
+/** GET /  ALL    =>>
+ *   { garageData: [ {...data }, ...] }
+ *
+ * TODO Authorization required: roleId >= ?
+ */
+// Write query to get all podium data for today
+router.get("/garageData/today", async function (req, res, next) {
+    try {
+        const garageData = await Data.getAllByPodiumId(req.params.podiumId);
+        return res.json({ garageData });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 module.exports = router;
