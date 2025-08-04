@@ -38,4 +38,17 @@ router.get("/garageData/today", async function (req, res, next) {
     }
 });
 
+/** GET /  TransactionDetail Data By ID=>
+ *   { data: {...transaction} }
+ *
+ */
+router.get("/transactionDetail/id/:id/", async function (req, res, next) {
+    try {
+        const transaction = await Data.getTransactionDetailsById(req.params.id);
+        return res.json({ data: transaction });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 module.exports = router;

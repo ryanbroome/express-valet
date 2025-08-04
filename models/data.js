@@ -69,7 +69,68 @@ ORDER BY t.transaction_time ASC
         return result.rows;
     }
 
+    static async getTransactionDetailsById(transactionId) {
+        const query = `SELECT 
+    -- Transactions
+    t.id AS "transactionId",
+    t.user_id AS "transactionUserId",
+    t.vehicle_id AS "transactionVehicleId",
+    t.podium_id AS "transactionPodiumId",
+    t.location_id AS "transactionLocationId",
+    t.status_id AS "transactionStatusId",
+    t.transaction_time AS "transactionTime",
+    t.updated_at AS "transactionUpdatedAt",
+
+    -- Vehicles
+    v.id AS "vehicleId",
+    v.ticket_num AS "vehicleTicketNum",
+    v.status_id AS "vehicleStatusId",
+    v.mobile AS "vehicleMobile",
+    v.color AS "vehicleColor",
+    v.make AS "vehicleMake",
+    v.damages AS "vehicleDamages",
+    v.notes AS "vehicleNotes",
+
+    -- Users
+    u.id AS "userId",
+    u.username AS "userUsername",
+    u.first_name AS "userFirstName",
+    u.last_name AS "userLastName",
+    u.email AS "userEmail",
+    u.phone AS "userPhone",
+    u.total_parked AS "userTotalParked",
+    u.role_id AS "userRoleId",
+    u.podium_id AS "userPodiumId",
+
+    -- Locations
+    l.id AS "locationId",
+    l.name AS "locationName",
+    l.region_id AS "locationRegionId",
+    l.address AS "locationAddress",
+    l.city AS "locationCity",
+    l.state AS "locationState",
+    l.zip_code AS "locationZipCode",
+    l.phone AS "locationPhone",
+
+    -- Podiums
+    p.id AS "podiumId",
+    p.name AS "podiumName",
+    p.location_id AS "podiumLocationId"
+
+FROM 
+    transactions t
+    JOIN vehicles v ON t.vehicle_id = v.id
+    JOIN users u ON t.user_id = u.id
+    JOIN locations l ON t.location_id = l.id
+    JOIN podiums p ON t.podium_id = p.id
+WHERE t.id = $1`;
+        const result = await db.query(query, [transactionId]);
+        if (!result.rows.length) throw new NotFoundError("Backend Error data/ : No transaction data available");
+        return result.rows;
+    }
+
     // /** GET transactions in a date range */
+
     // static async range({ startYear, startMonth, startDay, endYear, endMonth, endDay }) {
     //     const startDate = `${startYear}-${startMonth}-${startDay}`;
     //     const endDate = `${endYear}-${endMonth}-${endDay}`;
