@@ -12,7 +12,6 @@ class Location {
         zipCode: "zip_code",
     };
 
-    // * VW
     /** POST / Create a location  update db, return new location data.
      *
      * data should be { user_id, vehicle_id, location_id }
@@ -50,7 +49,6 @@ class Location {
         return location;
     }
 
-    // * VW
     /** GET all locations from database
      *
      * Returns {id, name, regionId, address, city, state, zipCode, phone }
@@ -79,7 +77,6 @@ class Location {
         return locations;
     }
 
-    // * VW
     /** GET  location from database for a given id
      *
      * Returns { id, name, regionId, address, city, state, zipCode, phone }
@@ -110,7 +107,7 @@ class Location {
         if (!location) throw new NotFoundError(`Backend Error Location.getById: No locations available with ID : ${id}`);
         return location;
     }
-    // * VW
+
     /** GET  locations from database for a given name
      *    works with partial name anywhere in the name
      * Returns { id, name, regionId, address, city, state, zipCode, phone }
@@ -142,7 +139,6 @@ WHERE
         return locations;
     }
 
-    // *VW
     /** PATCH / Update  location data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -183,7 +179,7 @@ WHERE
 
         return location;
     }
-    // * VW
+
     /** SOFT DELETE given location by id from database; returns undefined.
      *
      * Throws NotFoundError if location not found.

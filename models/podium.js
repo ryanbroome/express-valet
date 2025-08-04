@@ -12,7 +12,7 @@ class Podium {
         locationId: "location_id",
         isDeleted: "is_deleted",
     };
-    // * VW
+
     /** POST / Create a podium  update db, return new podium data.
      *
      * data should be {  name, locationId }
@@ -46,7 +46,7 @@ class Podium {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-    // * VW
+
     /** GET all active podiums from database
      *
      * Returns {id, name, locationId }
@@ -71,7 +71,7 @@ class Podium {
 
         return podiums;
     }
-    // * VW
+
     /** GET  podium from database for a given id
      *
      * Returns { id, name, locationId }
@@ -97,7 +97,7 @@ class Podium {
 
         return podium;
     }
-    // * VW
+
     /** GET  podium from database for a given name
      *    works with partial name anywhere in the name
      * Returns { id, name, locationId }
@@ -125,7 +125,7 @@ class Podium {
 
         return podiums;
     }
-    // * VW
+
     /** PATCH / Update  podium data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -165,7 +165,7 @@ class Podium {
 
         return podium;
     }
-    // * VW
+
     /** SOFT DELETE: sets is_deleted = TRUE */
     static async remove(id) {
         const result = await db.query(`UPDATE podiums SET is_deleted = TRUE WHERE id = $1 RETURNING id`, [id]);

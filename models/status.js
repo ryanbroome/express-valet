@@ -7,7 +7,6 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for status. */
 
 class Status {
-    // *VW
     /** CREATE a new status.
      * data should be { status }
      * Returns { id, status }
@@ -38,7 +37,7 @@ class Status {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-    // * VW
+
     /** GET all status.
      * Returns [{ id, status }, ...]
      * Throws NotFoundError if no status found.
@@ -52,7 +51,7 @@ class Status {
 
         return status;
     }
-    // * VW
+
     /** GET status by id.
      * Returns { id, status }
      * Throws NotFoundError if not found.
@@ -66,7 +65,7 @@ class Status {
 
         return status;
     }
-    // * VW
+
     /** GET status by status value.
      * Returns { id, status }
      * Throws NotFoundError if not found.
@@ -80,7 +79,7 @@ class Status {
 
         return foundStatus;
     }
-    // * VW
+
     /** UPDATE status data with `data`.
      * Data can include: { status }
      * Returns { id, status }
@@ -104,7 +103,7 @@ class Status {
 
         return updatedStatus;
     }
-    // * VW
+
     /** DELETE status from database.
      * Throws NotFoundError if status not found.
      */

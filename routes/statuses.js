@@ -14,8 +14,6 @@ const statusUpdateSchema = require("../schemas/statusUpdate.json");
 
 const router = new express.Router();
 
-// * VW
-// !NMW
 /**  POST / CREATE { status } =>  { status }
  *
  * status should be { status } =>
@@ -38,8 +36,7 @@ router.post("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW required: roleId >= ?
+
 /** GET /  ALL    =>
  *   { status: [ {id, status }, ...] }
  */
@@ -51,8 +48,7 @@ router.get("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW
+
 /** GET /   statusId  =>
  *   { status: {id, status }, ...}
  *
@@ -67,8 +63,6 @@ router.get("/id/:id", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW => user.locationId === location.id?
 /** GET /  BY  name { name }  =>
  *   { status: [ {status }, ...] }
  *
@@ -82,8 +76,6 @@ router.get("/status/:status", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { id, name, regionId, address, city, state, zipCode, phone }
  *
  *  status is { id, status }
@@ -107,8 +99,6 @@ router.patch("/id/:id", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW => user.roleId >= ?
 /** DELETE  /:id  =>  { deleted: id }
  *
  * Authorization: login

@@ -14,8 +14,6 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
-//  * VW
-//  ! NMW
 /** POST /  { user }  => { user, token }
  *
  * Adds a new user. This is not the registration endpoint --- instead, this is
@@ -44,8 +42,6 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-//  * VW
-// ! NMW
 /** GET /  ALL => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of ALL USERS, ALL DATA.
@@ -60,8 +56,6 @@ router.get("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW ensure user.username = req.params.username, or roleId >= ?
 /** GET /username/:username => { user }
  *
  * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
@@ -76,8 +70,6 @@ router.get("/username/:username", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW ensure user.id = req.params.id, or roleId >= ?
 /** GET /id/ :id => { user }
  *
  * Returns { username, firstName, lastName, email, phone, totalParked, isAdmin }
@@ -91,8 +83,7 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-//  ! NMW Logged in user or roleId >= ?
+
 /** PATCH / :username { user } => { user }
  *
  * Data can include:
@@ -118,8 +109,7 @@ router.patch("/:username", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-//  ! NMW Logged in user or roleId >= ?
+
 /** PATCH / /parkOne/:username { user } => { user }
  *
  *
@@ -135,8 +125,7 @@ router.patch("/parkOne/:username", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-//  ! NMW current user or roleId >= ?
+
 /** DELETE /:username  =>  { deleted: username }
  *
  * Authorization required: login
@@ -149,8 +138,7 @@ router.delete("/:username", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-//  ! NMW current user or roleId >= ?
+
 /** DELETE /:id  =>  { deleted: ID }
  *
  * Authorization required: login

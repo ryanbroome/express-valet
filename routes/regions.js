@@ -14,8 +14,6 @@ const regionUpdateSchema = require("../schemas/regionUpdate.json");
 
 const router = new express.Router();
 
-// * VW
-// !NMW roleId >= ?
 /**  POST / CREATE { name } =>  { region }
  *
  * region should be {name} =>
@@ -40,8 +38,6 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW
 /** GET /  ALL    =>
  *   { locations: [ {id, name, regionId, address, city, state, zipCode, phone }, ...] }
  *
@@ -56,8 +52,6 @@ router.get("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW
 /** GET /   regionId  =>
  *   { regions: [ {id, name }, ...] }
  *
@@ -74,8 +68,6 @@ router.get("/id/:id", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW => user.regionId === region.id?
 /** GET /  BY  name { name }  =>
  *   { regions: [ {region }, ...] }
  *
@@ -89,8 +81,6 @@ router.get("/name/:name", async function (req, res, next) {
     }
 });
 
-// * VW
-// !NMW  Authorization required: user.roleId >=?
 /** PATCH  /:id  =>  { id, name }
  *
  *  region is { id, name }
@@ -113,8 +103,7 @@ router.patch("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-//  *VW
-// ! NMW => user.roleId >= ?
+
 /** DELETE  /:id  =>  { deleted: id }
  *
  * Authorization: login

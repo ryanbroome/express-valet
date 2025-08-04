@@ -13,8 +13,7 @@ const surveyNewSchema = require("../schemas/surveyNew.json");
 const surveyUpdateSchema = require("../schemas/surveyUpdate.json");
 
 const router = new express.Router();
-// * VW
-// !NMW
+
 /**  POST / CREATE { survey } =>  { survey }
  *
  * survey should be {transactionId, q1Response, q2Response,  q3Response, q4Response, q5Response, q6Response, submittedAt} =>
@@ -38,8 +37,7 @@ router.post("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW
+
 /** GET /  ALL    =>
  *   { surveys: [ {id, transactionId, q1Response, q2Response,  q3Response, q4Response, q5Response, q6Response, submittedAt }, ...] }
  *
@@ -52,8 +50,7 @@ router.get("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW
+
 /** GET /   surveyId  =>
  *   { surveys: [ {id, transactionId, q1Response, q2Response,  q3Response, q4Response, q5Response, q6Response, submittedAt }, ...] }
  *
@@ -69,8 +66,7 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW
+
 /** GET /   surveyId  =>
  *   { surveys: [ {id, transactionId, q1Response, q2Response,  q3Response, q4Response, q5Response, q6Response, submittedAt }, ...] }
  *
@@ -86,8 +82,7 @@ router.get("/transactionId/:id", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW  Authorization required: user.roleId >=?
+
 /** PATCH  /:id  =>  { id, name, regionId, address, city, state, zipCode, phone }
  *
  *  survey is { id, transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response, submittedAt }
@@ -110,8 +105,7 @@ router.patch("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// ! NMW => user.roleId >= ?
+
 /** DELETE  /:id  =>  { deleted: id }
  *
  * Authorization: login

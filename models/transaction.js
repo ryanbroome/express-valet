@@ -15,7 +15,6 @@ class Transaction {
         statusId: "status_id",
     };
 
-    // * VW
     /** POST / Create a transaction (from data), update db, return new transaction data.
      *
      * data should be { userId, vehicleId, podiumId, locationId, statusId }
@@ -72,7 +71,6 @@ class Transaction {
         return transaction;
     }
 
-    // *VW
     /** GET all transactions from database
      *
      * Returns { transactionId, userId, vehicleId, podiumId, locationId, statusId, transactionTime, updatedAt }
@@ -103,7 +101,7 @@ class Transaction {
         if (transactions.length === 0) throw new NotFoundError(`Backend Error Transaction.getAll: No transactions available`);
         return transactions;
     }
-    // * VW
+
     /** GET transaction by id from database
      *
      * Returns { id, userId, vehicleId, locationId, statusId, transactionTime, updatedAt }
@@ -135,7 +133,6 @@ class Transaction {
         return transactions;
     }
 
-    // * VW
     /** PATCH / Update  transaction data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -177,7 +174,6 @@ class Transaction {
         return transaction;
     }
 
-    //  * VW
     /** DELETE given transaction from database; returns undefined.
      *
      * Throws NotFoundError if transaction not found.

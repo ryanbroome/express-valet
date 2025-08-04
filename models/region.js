@@ -7,7 +7,6 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for regions. */
 
 class Region {
-    // * VW
     /** CREATE a new region.
      *
      * data should be { name }
@@ -39,7 +38,7 @@ class Region {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-    // * VW
+
     /** GET all regions.
      *
      * Returns [{ id, name }, ...]
@@ -54,7 +53,7 @@ class Region {
 
         return regions;
     }
-    // * VW
+
     /** GET region by id.
      *
      * Returns { id, name }
@@ -69,7 +68,7 @@ class Region {
 
         return region;
     }
-    // * VW
+
     /** GET regions by name.
      *
      * Returns [{ id, name }, ...]
@@ -84,7 +83,7 @@ class Region {
 
         return regions;
     }
-    // * VW
+
     /** UPDATE region data with `data`.
      *
      * Data can include: { name }
@@ -109,7 +108,7 @@ class Region {
 
         return region;
     }
-    // * VW
+
     /** SOFT DELETE region from database. */
     static async remove(id) {
         const result = await db.query(`UPDATE regions SET is_deleted = TRUE WHERE id = $1 RETURNING id, name, is_deleted AS "isDeleted"`, [id]);

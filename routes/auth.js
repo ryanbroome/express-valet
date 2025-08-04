@@ -11,8 +11,6 @@ const { BadRequestError, ExpressError } = require("../expressError");
 
 const router = new express.Router();
 
-// *VW
-// ! NMW
 /** POST /auth/token:  { username, password } => { token }
  *
  * Returns JWT token which can be used to authenticate further requests.
@@ -49,8 +47,6 @@ router.post("/token", async function (req, res, next) {
     }
 });
 
-// *VW
-// ! NMW
 /** POST /auth/register:   { user } => { token }
  *
  * user must include { username, password, firstName, lastName, email, phone, roleId }

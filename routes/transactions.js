@@ -13,8 +13,6 @@ const transactionUpdateSchema = require("../schemas/transactionUpdate.json");
 
 const router = new express.Router();
 
-// * VW
-// ! NMW
 /** POST / { transaction } =>  { transaction }
  *
  * transaction should be {userId, vehicleId } =>
@@ -39,8 +37,6 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** GET /  All
  *   Returns all transactions in the database.
  *   Returns an object with a key "transactions" containing an array of transaction objects.
@@ -56,8 +52,6 @@ router.get("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** GET /  By ID=>
  *   { transaction: {...transaction} }
  *
@@ -71,8 +65,6 @@ router.get("/id/:id/", async function (req, res, next) {
     }
 });
 
-//  * VW
-//  ! NMW
 /** PATCH /[id] { data } => { transaction }
  *
  * Patches transaction data.
@@ -95,8 +87,6 @@ router.patch("/:id", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** DELETE /[id]  =>  { deleted: id }
  *
  */

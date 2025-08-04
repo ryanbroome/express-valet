@@ -13,7 +13,6 @@ class Vehicle {
         statusId: "status_id",
     };
 
-    //  * VW
     /** POST Create a vehicle (from data), update db, return new vehicle data.
      *
      * data should be { ticketNum, statusId, mobile, color, make, damages, notes }
@@ -54,7 +53,7 @@ class Vehicle {
 
         return vehicle;
     }
-    // * VW
+
     /** GET all vehicles.
      *
      * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
@@ -84,7 +83,7 @@ class Vehicle {
             throw err;
         }
     }
-    // * VW
+
     /** GET vehicle by ID.
      *
      * Returns [{ ticketNum, statusId, mobile, color, make, damages, notes }, ...]
@@ -112,7 +111,7 @@ class Vehicle {
         if (!vehicle) throw new NotFoundError(`Backend Error: No vehicle with ID : ${id}`);
         return vehicle;
     }
-    // * VW
+
     /** GET Find vehicles by status**/
     static async getByStatusId(statusId) {
         const vehicleRes = await db.query(
@@ -139,7 +138,7 @@ class Vehicle {
 
         return vehicles;
     }
-    // * VW
+
     /** GET Given a vehicle partial mobile and statusId return data about vehicle.
      *
      * Returns {}
@@ -173,7 +172,7 @@ ILIKE
 
         return vehicle;
     }
-    // * VW
+
     /** PATCH Update vehicle data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -212,7 +211,6 @@ ILIKE
         return vehicle;
     }
 
-    // * VW
     /** DELETE given vehicle from database; returns undefined.
      *
      * Throws NotFoundError if vehicle not found.

@@ -9,7 +9,6 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 /** Related functions for users. */
 class User {
-    // * VW
     /** authenticate user with username, password.
      *
      * Returns { username, first_name, last_name, email, phone, total_parked, role_id, podium_id }
@@ -50,7 +49,6 @@ class User {
         throw new UnauthorizedError("Backend UnauthorizedError: Invalid username/password");
     }
 
-    // *VW
     /** Register user with data.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
@@ -104,7 +102,7 @@ class User {
 
         return result.rows[0];
     }
-    // * VW
+
     /** Find all users.
      *
      * Returns [{ username, first_name, last_name, email, phone, totalParked, roleId, podiumId }, ...]
@@ -129,7 +127,6 @@ class User {
         return result.rows;
     }
 
-    // * VW
     /** Given a username, return data about user.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
@@ -208,7 +205,7 @@ class User {
         if (userRes.rows.length === 0) throw new NotFoundError(`Backend NotFoundError: No user(s) with roleId: ${roleId}`);
         return userRes.rows;
     }
-    // * VW
+
     /** Given a username, return data about user.
      *
      * Returns { username, firstName, lastName, email, phone, totalParked, roleId, podiumId }
@@ -240,7 +237,7 @@ class User {
 
         return user;
     }
-    // * VW
+
     /** Update user data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain
@@ -302,7 +299,6 @@ class User {
         delete user.password;
         return user;
     }
-    // * VW
     /** Increment the total_parked count for a user by 1. */
     static async incrementParked(username) {
         try {
@@ -335,7 +331,7 @@ class User {
             console.error(err);
         }
     }
-    // * VW
+
     /** Delete given user from database; returns undefined. */
     static async remove(username) {
         let result = await db.query(
@@ -352,7 +348,7 @@ class User {
 
         if (!user) throw new NotFoundError(`Backend NotFoundError: No user: ${username}`);
     }
-    // * VW
+
     /** Delete given user from database; returns undefined. */
     static async removeById(id) {
         let result = await db.query(

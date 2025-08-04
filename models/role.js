@@ -11,7 +11,7 @@ class Role {
     static jsToSql = {
         isDeleted: "is_deleted",
     };
-    //  * VW
+
     /** CREATE a new role.
      * ? If not working try removing the object from argument . example Role.create(role) vs Role.create({ role })
      * data should be { role }
@@ -38,7 +38,7 @@ class Role {
             throw new BadRequestError(`Database error: ${err.message}`);
         }
     }
-    // * VW
+
     /** GET all roles.
      *
      * Returns [{ id, role }, ...]
@@ -50,7 +50,7 @@ class Role {
         if (!roles.length) throw new NotFoundError(`Backend Error: No roles found in database`);
         return roles;
     }
-    // * VW
+
     /** GET role by id.
      *
      * Returns { id, role }
@@ -62,14 +62,14 @@ class Role {
         if (!role) throw new NotFoundError(`Backend Error: No role found with ID: ${id}`);
         return role;
     }
-    // * VW
+
     static async getByRole(role) {
         const result = await db.query(`SELECT id, role FROM roles WHERE role = $1`, [role]);
         const roles = result.rows;
         if (!roles.length) throw new NotFoundError(`Backend Error Role.getByRole: No roles found with name: ${role}`);
         return roles;
     }
-    // * VW
+
     /** UPDATE role data with `data`.
      *
      * Data can include: { role }
@@ -92,7 +92,7 @@ class Role {
         if (!updatedRole) throw new NotFoundError(`Backend Error Role.update: No role to update with ID: ${id}`);
         return updatedRole;
     }
-    // * VW
+
     /** SOFT DELETE: sets is_deleted = TRUE */
     static async remove(id) {
         const result = await db.query(`UPDATE roles SET is_deleted = TRUE WHERE id = $1 RETURNING id`, [id]);

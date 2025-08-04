@@ -13,8 +13,7 @@ const podiumNewSchema = require("../schemas/podiumNew.json");
 const podiumUpdateSchema = require("../schemas/podiumUpdate.json");
 
 const router = new express.Router();
-// * VW
-// !NMW
+
 /**  POST / CREATE { podium } =>  { podium }
  *
  * podium should be {name, locationId, isDeleted} =>
@@ -38,8 +37,7 @@ router.post("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW user.roleId >= ?
+
 /** GET /  ALL    =>
  *   { podiums: [ {id, name, locationId, isDeleted }, ...] }
  *
@@ -52,8 +50,7 @@ router.get("/", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW
+
 /** GET /   podium  =>
  *   { podiums: [ {id, name, locationId, isDeleted }, ...] }
  */
@@ -65,8 +62,7 @@ router.get("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-//  * VW
-// !NMW => user.podiumId === podium.id?
+
 /** GET /  BY  name { name }  =>
  *   { podiums: [ {podium }, ...] }
  *
@@ -79,8 +75,7 @@ router.get("/name/:name", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// !NMW  Authorization required: user.roleId >=?
+
 /** PATCH  /:id  =>  { id, name, locationId, isDeleted }
  *
  *  podium is { id, name, locationId, isDeleted }
@@ -103,8 +98,7 @@ router.patch("/id/:id", async function (req, res, next) {
         return next(err);
     }
 });
-// * VW
-// ! NMW => user.roleId >= ?
+
 /** DELETE  /:id  =>  { deleted: id }
  *
  * Authorization: login

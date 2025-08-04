@@ -19,7 +19,6 @@ class Survey {
         submittedAt: "submitted_at",
     };
 
-    // * VW
     /** CREATE a new survey.
      * data should be: { transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response }
      * Returns { id, transactionId, q1Response, q2Response, q3Response, q4Response, q5Response, q6Response, submittedAt }
@@ -39,7 +38,6 @@ class Survey {
 
         return survey;
     }
-    // * VW
     /** GET all surveys.
      * Returns [{...}, ...]
      * Throws NotFoundError if no surveys found.
@@ -56,7 +54,7 @@ class Survey {
 
         return surveys;
     }
-    // * VW
+
     /** GET survey by id.
      * Returns {...}
      * Throws NotFoundError if not found.
@@ -74,7 +72,7 @@ class Survey {
 
         return survey;
     }
-    // * VW
+
     /** GET survey by transactionId.
      * Returns {...}
      * Throws NotFoundError if not found.
@@ -92,7 +90,7 @@ class Survey {
 
         return survey;
     }
-    // * VW
+
     /**
      * UPDATE survey data with `data`.
      * Data can include: { q1_response, q2_response, q3_response, q4_response, q5_response, q6_response }
@@ -133,7 +131,7 @@ class Survey {
 
         return survey;
     }
-    // * VW
+
     /** DELETE survey from database.
      * Throws NotFoundError if survey not found.
      */

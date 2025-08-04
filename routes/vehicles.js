@@ -13,8 +13,6 @@ const vehicleUpdateSchema = require("../schemas/vehicleUpdate.json");
 
 const router = new express.Router();
 
-// * VW
-//  ! NMW
 /** POST / { vehicle } =>  { vehicle }
  *
  * vehicle should be { ticketNum, vehicleStatus, mobile, color, make, damages, notes }
@@ -40,8 +38,6 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** GET / =>  { vehicles }
  *
  * Returns { [ { vehicle0 } , { vehicle1 } , { vehicle2 } , ... ] }
@@ -56,8 +52,6 @@ router.get("/", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** GET / =>  { vehicles }
  *
  * Returns {  vehicle  }
@@ -73,8 +67,6 @@ router.get("/id/:id", async function (req, res, next) {
     }
 });
 
-//  * VW
-// ! NMW
 /** GET /:mobile  =>  { vehicle }
  *
  *  vehicle is { ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }
@@ -89,8 +81,6 @@ router.get("/mobile/:mobile", async function (req, res, next) {
     }
 });
 
-//  * VW
-// ! NMW
 /** GET /:vehicleStatus  =>  { vehicles }
  *
  *  vehiclea are [{ ticketNum, checkIn, checkOut, vehicleStatus, mobile, color, make, damages, notes }, ...]
@@ -106,8 +96,6 @@ router.get("/status/:statusId", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** PATCH / :id  => { vehicle }
  *
  * Patches vehicle data.
@@ -135,8 +123,6 @@ router.patch("/id/:id", async function (req, res, next) {
     }
 });
 
-// * VW
-// ! NMW
 /** DELETE /id/:id  =>  { deleted: msg }
  *
  * Authorization: login
