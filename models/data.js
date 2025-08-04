@@ -115,7 +115,11 @@ ORDER BY t.transaction_time ASC
     -- Podiums
     p.id AS "podiumId",
     p.name AS "podiumName",
-    p.location_id AS "podiumLocationId"
+    p.location_id AS "podiumLocationId",
+
+    --Status
+    s.id AS "statusId",
+    s.status AS "statusDescription"
 
 FROM 
     transactions t
@@ -123,6 +127,7 @@ FROM
     JOIN users u ON t.user_id = u.id
     JOIN locations l ON t.location_id = l.id
     JOIN podiums p ON t.podium_id = p.id
+    JOIN status s ON t.status_id = s.id
 WHERE t.id = $1`;
         const result = await db.query(query, [transactionId]);
         if (!result.rows.length) throw new NotFoundError("Backend Error data/ : No transaction data available");

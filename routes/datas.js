@@ -42,10 +42,10 @@ router.get("/garageData/today", async function (req, res, next) {
  *   { data: {...transaction} }
  *
  */
-router.get("/transactionDetail/id/:id/", async function (req, res, next) {
+router.get("/transactionDetail/:id/", async function (req, res, next) {
     try {
-        const transaction = await Data.getTransactionDetailsById(req.params.id);
-        return res.json({ data: transaction });
+        const transactionDetail = await Data.getTransactionDetailsById(req.params.id);
+        return res.json({ transactionDetail });
     } catch (err) {
         return next(err);
     }
