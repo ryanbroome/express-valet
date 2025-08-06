@@ -51,4 +51,17 @@ router.get("/transactionDetail/:id/", async function (req, res, next) {
     }
 });
 
+/** GET /  TransactionDetail Data By ID=>
+ *   { data: {...transaction} }
+ *
+ */
+router.get("/podiums/locationId/:id/", async function (req, res, next) {
+    try {
+        const podiums = await Data.getPodiumsByLocationId(req.params.id);
+        return res.json({ podiums });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 module.exports = router;

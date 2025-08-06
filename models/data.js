@@ -69,6 +69,24 @@ ORDER BY t.transaction_time ASC
         return result.rows;
     }
 
+    // GET podium names
+    static async getPodiumsByLocationId(locationId) {
+        const query = `
+SELECT
+    -- Podiums
+    p.id,
+    p.name,
+    p.location_id
+FROM 
+    podiums p
+WHERE p.location_id = $1
+ORDER BY p.name ASC
+`;
+        const result = await db.query(query, [locationId]);
+        if (!result.rows.length) throw new NotFoundError("Backend Error /data: No data available");
+        return result.rows;
+    }
+
     static async getTransactionDetailsById(transactionId) {
         const query = `SELECT 
     -- Transactions
