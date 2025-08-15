@@ -7,7 +7,6 @@ const Data = require("../models/data");
 const router = new express.Router();
 
 // // const { BadRequestError } = require("../expressError");
-// // const { ensureLoggedIn } = require("../middleware/auth");
 
 /** GET /  ALL    =>>
  *   { garageData: [ {...data }, ...] }

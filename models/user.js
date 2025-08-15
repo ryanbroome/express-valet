@@ -300,7 +300,7 @@ class User {
         return user;
     }
     /** Increment the total_parked count for a user by 1. */
-    static async incrementParked(username) {
+    static async incrementParked(id) {
         try {
             const query = `
       UPDATE 
@@ -308,7 +308,7 @@ class User {
       SET 
         total_parked = total_parked + 1
       WHERE 
-        username = $1
+        id = $1
       RETURNING
         username,
         first_name AS "firstName",
@@ -320,11 +320,11 @@ class User {
         podium_id AS "podiumId"
         `;
 
-            const result = await db.query(query, [username]);
+            const result = await db.query(query, [id]);
 
             const user = result.rows[0];
 
-            if (!user) throw new NotFoundError(`Backend NotFoundError User.incrementParked: No user: ${username}`);
+            if (!user) throw new NotFoundError(`Backend NotFoundError User.incrementParked: No user: ${id}`);
 
             return user;
         } catch (err) {

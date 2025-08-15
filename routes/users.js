@@ -117,9 +117,9 @@ router.patch("/:username", async function (req, res, next) {
  *
  * Authorization required: login && same user || admin
  **/
-router.patch("/parkOne/:username", async function (req, res, next) {
+router.patch("/parkOne/:id", async function (req, res, next) {
     try {
-        const user = await User.incrementParked(req.params.username);
+        const user = await User.incrementParked(req.params.id);
         return res.json({ user });
     } catch (err) {
         return next(err);
