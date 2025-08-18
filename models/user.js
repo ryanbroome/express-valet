@@ -136,19 +136,21 @@ class User {
     static async getByUsername(username) {
         const userRes = await db.query(
             `SELECT 
-          id,
-          username,
-          first_name AS "firstName",
-          last_name AS "lastName",
-          email,
-          phone, 
-          total_parked AS "totalParked",
-          role_id AS "roleId",
-          podium_id AS "podiumId"
+          u.id,
+          u.username,
+          u.first_name AS "firstName",
+          u.last_name AS "lastName",
+          u.email,
+          u.phone, 
+          u.total_parked AS "totalParked",
+          u.role_id AS "roleId",
+          u.podium_id AS "podiumId",
+          p.location_id AS "locationId"
       FROM 
-          users
+          users u
+      LEFT JOIN podiums p ON u.podium_id = p.id
       WHERE 
-          username = $1`,
+          u.username = $1`,
             [username]
         );
 
@@ -295,6 +297,9 @@ class User {
         const user = result.rows[0];
 
         if (!user) throw new NotFoundError(`Backend NotFoundError: No user with username: ${username}`);
+
+        const locRes = await db.query(' SELECT location_id AS "locationId" FROM podiums WHERE id = $1', [user.podiumId]);
+        user.locationId = locRes.rows[0] ? locRes.rows[0].locationId : null;
 
         delete user.password;
         return user;
