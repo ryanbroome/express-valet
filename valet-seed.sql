@@ -48,7 +48,8 @@ INSERT INTO users (username, password, first_name, last_name, email, phone, tota
     ('valet9', '$2b$12$R8y8A1Q11iycyIY5O/UTnePSbAScGDG4iyY3.Iysf3OoFnXC6T8ZK', 'Valet', 'Nine', 'valet9@valet.com', '5552020202', 0, 1, 3),
     ('valet10', '$2b$12$UPoUIk/vnlO.5xgVDqiF7uGGlrPWcutf3GVfnytFQ8i/9O.nx.2fG', 'Valet', 'Ten', 'valet10@valet.com', '5552020202', 0, 1, 4),
     ('valet11', '$2b$12$Hd0z5raDhEbrPTkVJAwzre5THFFOZ3GCs3IxebEE6WkJzxpaO3uES', 'Valet', 'Eleven', 'valet11@valet.com', '5552020202', 0, 1, 5),
-    ('valet12', '$2b$12$sFnLgjbY/MvF4mhPYu0zie/GSglD3f0JXNwktHidZITDA6UnTyF/.', 'Valet', 'Twelve', 'valet12@valet.com', '5552020202', 0, 1, 6);
+    ('valet12', '$2b$12$sFnLgjbY/MvF4mhPYu0zie/GSglD3f0JXNwktHidZITDA6UnTyF/.', 'Valet', 'Twelve', 'valet12@valet.com', '5552020202', 0, 1, 6),
+    ('admin', '$2b$12$TNXkUFNNcieqdJBe9PBxfuoT095N8RXD981H211YE2haesqHqm3yS', 'Admin', 'User', 'admin@valet.com', '5551234567', 0, 5, 1);
 
 -- 7. Seed vehicles (example)
 INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
