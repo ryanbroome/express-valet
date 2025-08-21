@@ -28,11 +28,12 @@ class Location {
        FROM 
             locations
        WHERE 
-            name  = $1`,
-            [name]
+            name  = $1
+            AND address = $2`,
+            [name, address]
         );
 
-        if (duplicateCheck.rows[0]) throw new BadRequestError(`Backend Error Location.create Duplicate location Alert : ${name} already exists`);
+        if (duplicateCheck.rows[0]) throw new BadRequestError(`Backend Error Location.create Duplicate location Alert : ${name} already exists at address: ${address}`);
 
         const result = await db.query(
             `INSERT INTO locations 
