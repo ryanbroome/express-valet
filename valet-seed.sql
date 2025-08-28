@@ -51,6 +51,27 @@ INSERT INTO users (username, password, first_name, last_name, email, phone, tota
     ('valet12', '$2b$12$sFnLgjbY/MvF4mhPYu0zie/GSglD3f0JXNwktHidZITDA6UnTyF/.', 'Valet', 'Twelve', 'valet12@valet.com', '5552020202', 0, 1, 6),
     ('admin', '$2b$12$TNXkUFNNcieqdJBe9PBxfuoT095N8RXD981H211YE2haesqHqm3yS', 'Admin', 'User', 'admin@valet.com', '5551234567', 0, 5, 1);
 
+-- 6. Seed user_regions
+INSERT INTO user_regions (user_id, region_id) VALUES
+    (1, 1),
+    (2, 1),
+    (3, 2),
+    (4, 2),
+    (5, 2),
+    (6, 2),
+    (7, 1),
+    (8, 1),
+    (9, 1),
+    (10, 1),
+    (11, 1),
+    (12, 1),
+    (13, 1),
+    (14, 1),
+    (14, 2);
+
+-- 6. Seed user_locations
+INSERT INTO user_locations (user_id, location_id) VALUES
+
 -- 7. Seed vehicles (example)
 INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
 VALUES
@@ -108,3 +129,4 @@ VALUES
         (3, 3, 2, 1, 5, 4, 'Satisfactory experience.', CURRENT_TIMESTAMP),
         (4, 2, 1, 5, 4, 3, 'Could be better.', CURRENT_TIMESTAMP),
         (5, 1, 5, 4, 3, 2, 'Not satisfied.', CURRENT_TIMESTAMP);
+

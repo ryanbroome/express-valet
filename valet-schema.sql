@@ -62,6 +62,24 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (podium_id) REFERENCES podiums(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS user_regions (
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    region_id INTEGER REFERENCES regions(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, region_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_locations (
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    location_id INTEGER REFERENCES locations(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, location_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_podiums (
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    podium_id INTEGER REFERENCES podiums(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, podium_id)
+);
+
 -- 5. Tables that depend on status
 CREATE TABLE IF NOT EXISTS vehicles (
     id SERIAL PRIMARY KEY,
