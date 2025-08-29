@@ -6,8 +6,6 @@ const express = require("express");
 const Data = require("../models/data");
 const router = new express.Router();
 
-// // const { BadRequestError } = require("../expressError");
-
 /** GET /  ALL    =>>
  *   { garageData: [ {...data }, ...] }
  *
