@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("./config");
 
-const users = [{ username: "admin", password: "password" }];
+const users = [{ username: "director", password: "password" }];
 
 async function generateHashedPasswords() {
     for (let user of users) {

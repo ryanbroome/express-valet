@@ -49,34 +49,41 @@ INSERT INTO users (username, password, first_name, last_name, email, phone, tota
     ('valet10', '$2b$12$UPoUIk/vnlO.5xgVDqiF7uGGlrPWcutf3GVfnytFQ8i/9O.nx.2fG', 'Valet', 'Ten', 'valet10@valet.com', '5552020202', 0, 1, 4),
     ('valet11', '$2b$12$Hd0z5raDhEbrPTkVJAwzre5THFFOZ3GCs3IxebEE6WkJzxpaO3uES', 'Valet', 'Eleven', 'valet11@valet.com', '5552020202', 0, 1, 5),
     ('valet12', '$2b$12$sFnLgjbY/MvF4mhPYu0zie/GSglD3f0JXNwktHidZITDA6UnTyF/.', 'Valet', 'Twelve', 'valet12@valet.com', '5552020202', 0, 1, 6),
-    ('admin', '$2b$12$TNXkUFNNcieqdJBe9PBxfuoT095N8RXD981H211YE2haesqHqm3yS', 'Admin', 'User', 'admin@valet.com', '5551234567', 0, 5, 1);
+    ('admin', '$2b$12$TNXkUFNNcieqdJBe9PBxfuoT095N8RXD981H211YE2haesqHqm3yS', 'Admin', 'User', 'admin@valet.com', '5551234567', 0, 5, 1),
+    ('supervisor', '$2b$12$aQkZvUOpeC2X1jPNwXZdTeIsIUXTBl3MnSbsXqKb1Z/fhtV5..//G', 'Supervisor', 'User', 'supervisor@valet.com', '5557654321', 0, 2, 1),
+    ('director', '$2b$12$LLfF5wReePZxXs91R5jeL.Hf54J66O6ZuyKLUU7MhnQaVBnMPp/Je', 'Director', 'User', 'director@valet.com', '5558888888', 0, 4, 1);
 
--- 6. Seed user_regions
-INSERT INTO user_regions (user_id, region_id) VALUES
-    (1, 1),
-    (2, 1),
-    (3, 2),
-    (4, 2),
-    (5, 2),
-    (6, 2),
-    (7, 1),
-    (8, 1),
-    (9, 1),
-    (10, 1),
-    (11, 1),
-    (12, 1),
-    (13, 1),
-    (14, 1),
-    (14, 2);
+-- 7. Seed user_regions
+-- manager (1): North
+INSERT INTO user_regions (user_id, region_id) VALUES (1, 1);
+-- admin (14): North, South
+INSERT INTO user_regions (user_id, region_id) VALUES (14, 1), (14, 2);
 
--- 6. Seed user_locations
-INSERT INTO user_locations (user_id, location_id) VALUES
+-- 8. Seed user_locations (assignments)
+-- manager (1): Hospital & Dealership
+INSERT INTO user_locations (user_id, location_id) VALUES (1, 1), (1, 2);
+-- admin (14): Hospital & Dealership
+INSERT INTO user_locations (user_id, location_id) VALUES (14, 1), (14, 2);
 
--- 7. Seed vehicles (example)
+-- 9. Seed user_podiums (assignments)
+-- manager (1): All podiums
+INSERT INTO user_podiums (user_id, podium_id) VALUES
+    (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6);
+-- admin (14): All podiums
+INSERT INTO user_podiums (user_id, podium_id) VALUES
+    (14, 1), (14, 2), (14, 3), (14, 4), (14, 5), (14, 6);
+-- supervisor (2): Hospital podiums
+INSERT INTO user_podiums (user_id, podium_id) VALUES
+    (15, 1), (15, 2), (15, 3);
+-- director (16): All podiums
+INSERT INTO user_podiums (user_id, podium_id) VALUES
+    (16, 1), (16, 2), (16, 3), (16, 4), (16, 5), (16, 6);
+
+-- 10. Seed vehicles (example)
 INSERT INTO vehicles (ticket_num, status_id, mobile, color, make, damages, notes)
 VALUES
     (1001, 1, '5553030303', 'Red', 'Volkswagen', '[{"x":222.71875,"y":143}]', 'stick shift'),
-    (1002, 2, '5554040404', 'Blue', 'Toyota', '[{"x":222.71875,"y":143}]', 'automatic'),
+    (1002, 2, '5554040404', 'Blue', 'Subaru', '[{"x":222.71875,"y":143}]', 'automatic'),
     (1003, 3, '5555050505', 'Green', 'Honda', '[{"x":222.71875,"y":143}]', 'manual'),
     (1004, 4, '5556060606', 'Black', 'Ford', '[{"x":222.71875,"y":143}]', 'automatic'),
     (1005, 5, '5557070707', 'White', 'Chevrolet', '[{"x":222.71875,"y":143}]', 'stick shift'),
@@ -102,7 +109,7 @@ VALUES
     (1025, 1, '5554344444', 'White', 'Chevrolet', '[{"x":222.71875,"y":143}]', 'stick shift'),
     (1026, 2, '5554544646', 'Red', 'Nissan', '[{"x":222.71875,"y":143}]', 'automatic');
 
--- 8. Seed transactions (example)
+-- 11. Seed transactions (example)
 INSERT INTO transactions (user_id, vehicle_id, podium_id, location_id, status_id, transaction_time, updated_at)
 VALUES
     (1, 1, 1, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -121,7 +128,7 @@ VALUES
     (1, 14, 4, 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (2, 15, 5, 1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-    -- 9. Seed surveys table
+    -- 12. Seed surveys table
     INSERT INTO surveys (transaction_id, q1_response, q2_response, q3_response, q4_response, q5_response, q6_response, submitted_at)
     VALUES
         (1, 5, 4, 3, 2, 1, 'Great service!', CURRENT_TIMESTAMP),
