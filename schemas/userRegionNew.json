@@ -1,0 +1,33 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "required": [
+        "userId",
+        "regionId"
+    ],
+    "properties": {
+        "userId": {
+            "type": "integer",
+            "default": 1,
+            "title": "The userId Schema",
+            "examples": [
+                1
+            ]
+        },
+        "regionId": {
+            "type": "integer",
+            "default": 1,
+            "title": "The regionId Schema",
+            "examples": [
+                1
+            ]
+        }
+    },
+    "examples": [{
+        "userId": 1,
+        "regionId": 1
+    }]
+}

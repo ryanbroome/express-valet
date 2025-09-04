@@ -20,6 +20,9 @@ const rolesRoutes = require("./routes/roles");
 const statusRoutes = require("./routes/statuses");
 const surveysRoutes = require("./routes/surveys");
 const dataRoutes = require("./routes/datas");
+const userPodiums = require("./routes/userPodiums");
+const userLocations = require("./routes/userLocations");
+const userRegions = require("./routes/userRegions");
 const morgan = require("morgan");
 const app = express();
 
@@ -30,7 +33,6 @@ app.use(
         credentials: true,
     })
 );
-
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
@@ -46,6 +48,9 @@ app.use("/roles", rolesRoutes);
 app.use("/status", statusRoutes);
 app.use("/surveys", surveysRoutes);
 app.use("/data", dataRoutes);
+app.use("/userPodiums", userPodiums);
+app.use("/userLocations", userLocations);
+app.use("/userRegions", userRegions);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
