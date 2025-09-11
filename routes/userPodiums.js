@@ -50,9 +50,8 @@ router.get("/", async function (req, res, next) {
  */
 router.get("/userId/:userId", async function (req, res, next) {
     try {
-        const userPodiums = await UserPodium.getAllByUserId({ userId: req.params.userId });
-        const podiumIds = userPodiums.map((up) => up.podiumId);
-        return res.json({ userId: req.params.userId, podiumIds });
+        const userPodiumsRes = await UserPodium.getAllByUserId({ userId: req.params.userId });
+        return res.json(userPodiumsRes);
     } catch (err) {
         return next(err);
     }

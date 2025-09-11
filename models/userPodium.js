@@ -71,12 +71,13 @@ class UserPodium {
      * */
     static async getAllByUserId({ userId }) {
         const query = `
-        SELECT
-            podium_id AS "podiumId"
-        FROM
-            user_podiums up
-        WHERE
-            up.user_id = $1
+SELECT
+    p.id AS "podiumId",
+    p.name AS "podiumName",
+    p.location_id AS "locationId"
+FROM user_podiums up
+JOIN podiums p ON up.podium_id = p.id
+WHERE up.user_id = $1
         `;
 
         const result = await db.query(query, [userId]);

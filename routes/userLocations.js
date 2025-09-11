@@ -37,7 +37,7 @@ router.get("/userId/:userId", async function (req, res, next) {
     try {
         const userLocations = await UserLocation.getAllByUserId({ userId: req.params.userId });
         const locationIds = userLocations.map((ul) => ul.locationId);
-        return res.json({ userId: req.params.userId, locationIds });
+        return res.json(userLocations);
     } catch (err) {
         return next(err);
     }

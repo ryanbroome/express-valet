@@ -41,13 +41,20 @@ class UserLocation {
 
     static async getAllByUserId({ userId }) {
         const query = `
-        SELECT
-            location_id AS "locationId"
-        FROM
-            user_locations ul
-        WHERE
-            ul.user_id = $1
-        `;
+     -- Get all locations assigned to the user
+SELECT
+    l.id AS "locationId",
+    l.name AS "locationName",
+    l.address,
+    l.city,
+    l.state,
+    l.zip_code AS "zipCode",
+    l.phone,
+    l.region_id AS "regionId"
+FROM user_locations ul
+JOIN locations l ON ul.location_id = l.id
+WHERE ul.user_id = $1;`;
+
         const result = await db.query(query, [userId]);
         const userLocation = result.rows;
         if (!userLocation) throw new NotFoundError(`Backend Error UserLocation.getById: No userLocation found for user ID: ${userId}`);
