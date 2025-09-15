@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     podium_id INTEGER,
     location_id INTEGER,
     status_id INTEGER NOT NULL,
-    transaction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    transaction_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE,
     FOREIGN KEY (podium_id) REFERENCES podiums(id) ON DELETE CASCADE,
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS surveys (
     q4_response INTEGER NOT NULL,
     q5_response INTEGER NOT NULL,
     q6_response TEXT,
-    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    submitted_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Function to auto-update the Transactions.updated_at column
