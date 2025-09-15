@@ -53,7 +53,11 @@ SELECT
     -- Podiums
     p.id AS "podiumId",
     p.name AS "podiumName",
-    p.location_id AS "podiumLocationId"
+    p.location_id AS "podiumLocationId",
+
+    -- Status
+    s.id AS "statusId",
+    s.status AS "statusDescription"
 
 FROM 
     transactions t
@@ -61,11 +65,12 @@ FROM
     JOIN users u ON t.user_id = u.id
     JOIN locations l ON t.location_id = l.id
     JOIN podiums p ON t.podium_id = p.id
+    JOIN status s ON s.id = t.status_id
 WHERE t.podium_id = $1
 ORDER BY t.transaction_time ASC
 `;
         const result = await db.query(query, [podiumId]);
-        if (!result.rows.length) throw new NotFoundError("Backend Error: No data available");
+        if (!result.rows.length) throw new NotFoundError(`Backend Data.getAllByPodiumId: No Transactions available for Podium ID: ${podiumId}`);
         return result.rows;
     }
 
@@ -83,7 +88,7 @@ WHERE p.location_id = $1
 ORDER BY p.name ASC
 `;
         const result = await db.query(query, [locationId]);
-        if (!result.rows.length) throw new NotFoundError("Backend Error /data: No data available");
+        if (!result.rows.length) throw new NotFoundError(`Backend Data.getPodiumsByLocationId: No Podiums found for Location ID: ${locationId}`);
         return result.rows;
     }
 
