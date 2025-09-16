@@ -4,6 +4,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 const Data = require("../models/data");
+const { BadRequestError } = require("../expressError");
 const router = new express.Router();
 
 /** GET today's transactions for a single podium
@@ -42,11 +43,11 @@ router.get("/garageData/today/location/:locationId", async function (req, res, n
 // Get today's transactions for multiple podiums (POST for array)
 router.post("/garageData/today/podiums", async function (req, res, next) {
     try {
-        const { podiumIds, timezone } = req.body;
-        if (!Array.isArray(podiumIds) || !timezone) {
-            throw new BadRequestError("Missing podiumIds array or timezone string");
+        const { podiumIds, userTimeZone } = req.body;
+        if (!Array.isArray(podiumIds) || !userTimeZone) {
+            throw new BadRequestError("Missing podiumIds array or userTimeZone string");
         }
-        const garageData = await Data.getTodayTransactionsByPodiumIds(podiumIds, timezone);
+        const garageData = await Data.getTodayTransactionsByPodiumIds(podiumIds, userTimeZone);
         return res.json({ garageData });
     } catch (err) {
         return next(err);
@@ -54,7 +55,7 @@ router.post("/garageData/today/podiums", async function (req, res, next) {
 });
 
 // Get today's transactions for multiple locations (POST for array)
-router.get("/garageData/today/locations", async function (req, res, next) {
+router.post("/garageData/today/locations", async function (req, res, next) {
     try {
         const { locationIds, userTimeZone } = req.body;
         if (!Array.isArray(locationIds) || !userTimeZone) {
